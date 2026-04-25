@@ -1,5 +1,7 @@
 /* Docka Research — inspired by daneden.me, briewolfson.com */
 
+@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
 :root {
   --bg: #faf9f7;
   --text: #1a1a1a;
@@ -7,7 +9,7 @@
   --accent: #1a1a1a;
   --border: #e5e3df;
   --max-width: 680px;
-  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font-serif: 'Courier Prime', 'Courier New', monospace;
   --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
