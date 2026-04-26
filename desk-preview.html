@@ -9,21 +9,25 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --wood-dark: #3d1f0a;
-      --wood-mid: #6b3a1a;
-      --wood-light: #8b5022;
-      --desk-surface: #a8671e;
-      --mac-beige: #d4c8a8;
-      --mac-shadow: #a89878;
-      --screen-bg: #0d0d0d;
-      --screen-green: #c8e8a0;
-      --cream: #f0ead8;
-      --gold: #c8a040;
+      /* Palette based on Gregory Koberger warmth + System 6 authenticity */
+      --wall-bg: #EDE4D0;
+      --wall-texture: rgba(0,0,0,0.02);
+      --desk-surface: #C8902A;
+      --desk-glow: rgba(255,180,60,0.12);
+      --mac-platinum: #CEC5AB;
+      --mac-shadow: #B8AC88;
+      --screen-bg: #0a0a0a;
+      --screen-green: #33ff33;
+      --overlay-bg: #FFFFFF;
+      --text-main: #000000;
+      --hint-color: #C8BEA8;
+      --accent-gold: #C09040;
     }
 
     body {
       font-family: 'Special Elite', serif;
-      background: var(--wood-dark);
+      background: var(--wall-bg);
+      color: var(--text-main);
       height: 100vh;
       width: 100vw;
       overflow: hidden;
@@ -31,191 +35,154 @@
       user-select: none;
     }
 
+    /* ── SCENE WRAPPER ── */
+    .viewport-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .scene-scale-wrapper {
+      width: 1000px;
+      height: 800px;
+      position: relative;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
     /* ── SCENE ── */
     .scene {
       width: 100%;
       height: 100%;
       position: relative;
-      background:
-        radial-gradient(ellipse at 50% 0%, #1a0a03 0%, #3d1f0a 60%),
-        #3d1f0a;
+      background: var(--wall-bg);
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 80%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
     }
 
-    /* Wall */
-    .wall {
+    .wall-hint {
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 58%;
-      background:
-        repeating-linear-gradient(
-          180deg,
-          rgba(255,255,255,0.015) 0px,
-          rgba(255,255,255,0.015) 1px,
-          transparent 1px,
-          transparent 60px
-        ),
-        linear-gradient(to bottom, #1c0e05, #2a1408);
-    }
-
-    /* Subtle wall poster */
-    .wall-art {
-      position: absolute;
-      top: 8%;
-      left: 8%;
-      width: 100px;
-      height: 130px;
-      border: 6px solid #5a3a20;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      opacity: 0.7;
-      box-shadow: 3px 3px 12px rgba(0,0,0,0.6);
-    }
-    .wall-art-line {
-      height: 1px;
-      width: 70%;
-      background: rgba(200,160,64,0.5);
-    }
-    .wall-art-text {
-      font-family: 'VT323', monospace;
-      color: rgba(200,230,200,0.7);
-      font-size: 11px;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
       text-align: center;
-      line-height: 1.3;
+      color: var(--hint-color);
+      font-family: 'VT323', monospace;
+      font-size: 20px;
+      letter-spacing: 5px;
+      opacity: 0.7;
+      pointer-events: none;
     }
 
     /* Desk surface */
     .desk {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      height: 46%;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          transparent 0px,
-          transparent 28px,
-          rgba(0,0,0,0.04) 28px,
-          rgba(0,0,0,0.04) 29px
-        ),
-        repeating-linear-gradient(
-          180deg,
-          transparent 0px,
-          transparent 8px,
-          rgba(255,255,255,0.01) 8px,
-          rgba(255,255,255,0.01) 9px
-        ),
-        linear-gradient(to bottom,
-          #b87828 0%,
-          #a06820 25%,
-          #8b5a18 70%,
-          #7a4e14 100%
-        );
-      border-top: 5px solid #d4921e;
-      box-shadow: 0 -6px 30px rgba(0,0,0,0.5);
+      height: 40%;
+      background: var(--desk-surface);
+      background-image: 
+        repeating-linear-gradient(rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 1px, transparent 1px, transparent 15px),
+        radial-gradient(circle at 75% 20%, var(--desk-glow) 0%, transparent 65%);
+      border-top: 5px solid #B07820;
+      box-shadow: 0 -15px 50px rgba(0,0,0,0.1);
     }
+
+    /* Papers */
+    .paper {
+      position: absolute;
+      background: #FDFCF8;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+      border: 1px solid #EAE2D0;
+    }
+    .paper-1 { width: 140px; height: 180px; bottom: 12%; left: 14%; transform: rotate(-6deg); }
+    .paper-2 { width: 130px; height: 160px; bottom: 15%; left: 16%; transform: rotate(10deg); }
 
     /* ── MAC COMPUTER ── */
     .mac-wrap {
       position: absolute;
-      bottom: 42%;
+      bottom: 35%;
       left: 50%;
       transform: translateX(-50%);
-      cursor: pointer;
       z-index: 10;
-    }
-
-    .mac-wrap:hover .mac-body { filter: brightness(1.08); }
-    .mac-wrap:hover .glow-ring { opacity: 1; }
-
-    .glow-ring {
-      position: absolute;
-      inset: -8px;
-      border-radius: 14px;
-      box-shadow: 0 0 20px 6px rgba(200, 232, 160, 0.3);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
+      cursor: pointer;
     }
 
     .mac-body {
-      width: 200px;
-      background: linear-gradient(
-        135deg,
-        #e0d8c0 0%,
-        #d0c4a0 40%,
-        #c0b490 80%,
-        #b0a480 100%
-      );
-      border-radius: 14px 14px 6px 6px;
-      padding: 16px 16px 36px 16px;
+      width: 220px;
+      background: var(--mac-platinum);
+      border-radius: 12px 12px 6px 6px;
+      padding: 18px 18px 45px 18px;
       box-shadow:
-        inset -3px -4px 12px rgba(0,0,0,0.25),
-        inset 3px 3px 10px rgba(255,255,255,0.4),
-        5px 8px 24px rgba(0,0,0,0.7);
+        inset -4px -8px 12px rgba(0,0,0,0.1),
+        inset 4px 4px 10px rgba(255,255,255,0.4),
+        10px 15px 40px rgba(0,0,0,0.15);
       position: relative;
-      border: 2px solid #a89870;
+      border: 2px solid var(--mac-shadow);
       transition: filter 0.2s;
     }
+    .mac-wrap:hover .mac-body { filter: brightness(1.03); }
 
-    /* Screen bezel */
-    .mac-bezel {
-      background: #1a1610;
+    .mac-screen-area {
+      background: #2a2a2a;
       border-radius: 4px;
-      padding: 6px;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      padding: 10px;
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
+      position: relative;
     }
 
-    /* Screen */
     .mac-screen {
       background: var(--screen-bg);
-      height: 110px;
+      height: 120px;
       border-radius: 2px;
       overflow: hidden;
       position: relative;
       display: flex;
-      align-items: flex-start;
-      padding: 10px 8px;
+      flex-direction: column;
+      padding: 12px;
     }
 
-    /* CRT scanline overlay */
+    /* Interaction surface for Pong */
+    .screen-click-mask {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      cursor: help;
+    }
+
     .mac-screen::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0,0,0,0) 0px,
-        rgba(0,0,0,0) 2px,
-        rgba(0,0,0,0.12) 2px,
-        rgba(0,0,0,0.12) 3px
-      );
+      background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 3px);
       pointer-events: none;
-      z-index: 2;
-    }
-
-    /* Screen phosphor glow */
-    .mac-screen::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 40%, rgba(200,232,160,0.04) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 1;
+      z-index: 5;
     }
 
     .screen-text {
       font-family: 'VT323', monospace;
       font-size: 13px;
       color: var(--screen-green);
-      line-height: 1.45;
-      z-index: 3;
-      position: relative;
-      text-shadow: 0 0 8px rgba(200,232,160,0.6);
-      width: 100%;
+      line-height: 1.4;
+      z-index: 2;
+      text-shadow: 0 0 5px rgba(51, 255, 51, 0.4);
     }
+
+    .pong-hint {
+      position: absolute;
+      bottom: 6px;
+      right: 8px;
+      font-family: 'VT323', monospace;
+      font-size: 10px;
+      color: var(--screen-green);
+      opacity: 0.4;
+      animation: pulse 2s infinite;
+      z-index: 2;
+    }
+    @keyframes pulse { 50% { opacity: 0.1; } }
 
     .cursor-blink {
       display: inline-block;
@@ -225,1063 +192,620 @@
       margin-left: 1px;
       vertical-align: middle;
       animation: blink 0.9s step-end infinite;
-      box-shadow: 0 0 6px rgba(200,232,160,0.8);
     }
-
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* Apple logo area */
-    .mac-logo-strip {
+    .mac-logo-area {
       position: absolute;
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
+      width: 80%;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      gap: 4px;
     }
+    .mac-drive-slot { width: 65px; height: 5px; background: rgba(0,0,0,0.15); border-radius: 2px; }
+    .mac-model { font-family: 'VT323', monospace; font-size: 10px; color: #7A6F5A; }
 
-    .mac-drive-slot {
-      width: 68px;
-      height: 5px;
-      background: #888060;
-      border-radius: 3px;
-      border: 1px solid #665040;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
-    }
+    .mac-stand { width: 120px; height: 16px; background: var(--mac-shadow); margin: 0 auto; border-radius: 0 0 6px 6px; }
 
-    .mac-model-text {
-      font-family: 'VT323', monospace;
-      font-size: 10px;
-      color: #807060;
-      letter-spacing: 1px;
-    }
-
-    /* Stand */
-    .mac-stand {
-      width: 110px;
-      height: 16px;
-      background: linear-gradient(to bottom, #c0b498, #a89878);
-      margin: 0 auto;
-      border-radius: 0 0 6px 6px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    }
-
-    .mac-base {
-      width: 150px;
-      height: 8px;
-      background: linear-gradient(to bottom, #a89878, #887858);
-      margin: 0 auto;
-      border-radius: 0 0 5px 5px;
-      box-shadow: 2px 4px 12px rgba(0,0,0,0.6);
-    }
-
-    /* Hover tooltip */
+    /* ── ITEM LABELS ── */
     .item-label {
       position: absolute;
-      bottom: -28px;
+      top: -45px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.85);
-      border: 1px solid var(--gold);
-      color: var(--gold);
+      background: #2A1A08;
+      color: #FFF;
       font-family: 'VT323', monospace;
-      font-size: 14px;
-      padding: 3px 10px;
+      font-size: 18px;
+      padding: 4px 14px;
       white-space: nowrap;
       opacity: 0;
-      transition: opacity 0.25s;
-      letter-spacing: 2px;
+      transition: opacity 0.2s, transform 0.2s;
       pointer-events: none;
+      border-radius: 4px;
+      z-index: 100;
+      letter-spacing: 2px;
     }
-
-    .mac-wrap:hover .item-label { opacity: 1; }
+    [class*="-wrap"]:hover .item-label { opacity: 1; }
 
     /* ── KEYBOARD ── */
     .keyboard-wrap {
       position: absolute;
-      bottom: 7%;
+      bottom: 6%;
       left: 50%;
       transform: translateX(-50%);
       cursor: pointer;
       z-index: 10;
     }
-
-    .keyboard-wrap:hover .keyboard-body { filter: brightness(1.1); }
-    .keyboard-wrap:hover .item-label { opacity: 1; }
-
     .keyboard-body {
-      width: 210px;
-      height: 58px;
-      background: linear-gradient(to bottom, #d0c4a0, #b8ac88);
-      border-radius: 5px;
-      border: 2px solid #a09070;
-      padding: 5px 6px;
-      box-shadow:
-        2px 4px 12px rgba(0,0,0,0.5),
-        inset 0 1px 2px rgba(255,255,255,0.3);
+      width: 240px;
+      height: 65px;
+      background: var(--mac-platinum);
+      border-radius: 4px;
+      border: 2px solid var(--mac-shadow);
+      padding: 6px;
+      box-shadow: 4px 8px 15px rgba(0,0,0,0.12);
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      transition: filter 0.2s;
+      gap: 4px;
     }
-
-    .key-row {
-      display: flex;
-      gap: 2px;
-    }
-
-    .key {
-      flex: 1;
-      height: 13px;
-      background: linear-gradient(to bottom, #e8e0c8, #d0c8a8);
-      border-radius: 2px;
-      border: 1px solid #a89870;
-      box-shadow: 0 1px 0 rgba(0,0,0,0.35);
-    }
-    .key.wide { flex: 1.8; }
-    .key.wider { flex: 2.5; }
+    .key-row { display: flex; gap: 2px; height: 100%; }
+    .key { flex: 1; background: #EEE6D6; border: 1px solid var(--mac-shadow); border-radius: 2px; }
+    .key.wide { flex: 2; }
     .key.space { flex: 7; }
 
     /* ── MOUSE ── */
     .mouse-wrap {
       position: absolute;
       bottom: 8%;
-      left: calc(50% + 130px);
+      left: calc(50% + 150px);
       cursor: pointer;
       z-index: 10;
     }
-
-    .mouse-wrap:hover .mouse-body { filter: brightness(1.1); }
-    .mouse-wrap:hover .item-label { opacity: 1; }
-
-    .mouse-cord {
-      width: 2px;
-      height: 34px;
-      background: linear-gradient(to bottom, #5a5040, #7a6848);
-      margin: 0 auto;
-      border-radius: 1px;
-    }
-
     .mouse-body {
-      width: 40px;
-      height: 56px;
-      background: linear-gradient(135deg, #ddd4b8, #c8c0a0, #b8b090);
-      border-radius: 20px 20px 12px 12px;
-      border: 1.5px solid #a8a080;
+      width: 48px;
+      height: 65px;
+      background: var(--mac-platinum);
+      border-radius: 24px 24px 10px 10px;
+      border: 2px solid var(--mac-shadow);
+      box-shadow: 4px 5px 12px rgba(0,0,0,0.12);
       position: relative;
-      box-shadow:
-        2px 3px 8px rgba(0,0,0,0.5),
-        inset 2px 2px 6px rgba(255,255,255,0.4);
-      transition: filter 0.2s;
     }
-
-    .mouse-btn-line {
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60%;
-      height: 1px;
-      background: rgba(0,0,0,0.2);
-    }
-
-    .mouse-button {
-      position: absolute;
-      top: 8px;
-      left: 6px;
-      right: 6px;
-      height: 18px;
-      background: rgba(0,0,0,0.08);
-      border-radius: 10px 10px 0 0;
-      border-bottom: 1px solid rgba(0,0,0,0.15);
-    }
+    .mouse-btn { position: absolute; top: 12px; left: 8px; right: 8px; height: 18px; border-bottom: 1px solid rgba(0,0,0,0.1); }
 
     /* ── ENVELOPE ── */
     .envelope-wrap {
       position: absolute;
-      bottom: 14%;
-      right: 18%;
+      bottom: 12%;
+      right: 15%;
       cursor: pointer;
       z-index: 10;
+      transform: rotate(6deg);
     }
-
-    .envelope-wrap:hover .envelope-body { filter: brightness(1.12); }
-    .envelope-wrap:hover .item-label { opacity: 1; }
-
     .envelope-body {
-      width: 72px;
-      height: 52px;
-      background: linear-gradient(to bottom, #f8f2e0, #e8e0c8);
-      border: 2px solid #c4a840;
-      border-radius: 2px;
+      width: 85px;
+      height: 58px;
+      background: #FFFBF2;
+      border: 1px solid #D6CABA;
+      box-shadow: 4px 5px 12px rgba(0,0,0,0.08);
       position: relative;
-      box-shadow: 2px 3px 8px rgba(0,0,0,0.4);
-      transition: filter 0.2s;
-    }
-
-    /* V-fold on envelope */
-    .env-flap {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 26px;
       overflow: hidden;
     }
+    .env-flap { position: absolute; top: 0; left: 0; right: 0; height: 0; border-left: 42px solid transparent; border-right: 42px solid transparent; border-top: 32px solid #F6EEE0; }
 
-    .env-flap::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -2px; right: -2px;
-      height: 0;
-      border-left: 38px solid transparent;
-      border-right: 38px solid transparent;
-      border-top: 26px solid #d4b840;
-    }
-
-    .env-bottom-left {
-      position: absolute;
-      bottom: 0; left: -1px;
-      width: 0; height: 0;
-      border-left: 38px solid #e0d8a8;
-      border-top: 28px solid transparent;
-    }
-
-    .env-bottom-right {
-      position: absolute;
-      bottom: 0; right: -1px;
-      width: 0; height: 0;
-      border-right: 38px solid #d4cc9e;
-      border-top: 28px solid transparent;
-    }
-
-    .env-stamp {
-      position: absolute;
-      top: 4px;
-      right: 6px;
-      width: 14px;
-      height: 16px;
-      background: linear-gradient(135deg, #c04040, #a03030);
-      border: 1px solid #802020;
-      font-size: 7px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #f0d080;
-      font-family: 'VT323', monospace;
-    }
-
-    /* ── FLOPPY DISK ── */
+    /* ── FLOPPY ── */
     .floppy-wrap {
       position: absolute;
-      bottom: 17%;
-      left: 25%;
+      bottom: 16%;
+      left: 28%;
       cursor: pointer;
       z-index: 10;
-      transform: rotate(-6deg);
+      transform: rotate(-15deg);
     }
-
-    .floppy-wrap:hover { transform: rotate(0deg) scale(1.08); }
-    .floppy-wrap:hover .item-label { opacity: 1; }
-
     .floppy-body {
-      width: 54px;
-      height: 54px;
-      background: linear-gradient(135deg, #181828, #2a2a40);
-      border-radius: 3px 3px 6px 6px;
-      border: 1.5px solid #3a3a50;
+      width: 60px;
+      height: 60px;
+      background: #2D2D2D;
+      border-radius: 4px;
+      border: 1px solid #1A1A1A;
+      padding: 5px;
       position: relative;
-      box-shadow: 2px 3px 8px rgba(0,0,0,0.6);
-      transition: transform 0.2s;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.2);
     }
-
-    .floppy-label-area {
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      right: 4px;
-      height: 26px;
-      background: linear-gradient(to bottom, #f0f4ff, #e0e8ff);
-      border-radius: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'VT323', monospace;
-      font-size: 8px;
-      color: #1a1a3a;
-      text-align: center;
-      line-height: 1.2;
-      font-weight: bold;
-    }
-
-    .floppy-shutter {
-      position: absolute;
-      bottom: 7px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 22px;
-      height: 16px;
-      background: linear-gradient(to bottom, #c0c0d0, #a0a0b0);
-      border-radius: 1px;
-      border: 1px solid #808090;
-    }
-
-    .floppy-notch {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 8px;
-      height: 8px;
-      background: #2a2a40;
-      border-radius: 50%;
-      border: 1px solid #3a3a50;
-    }
+    .floppy-lbl { height: 28px; background: #FFF; border-radius: 1px; font-family: 'VT323', monospace; font-size: 9px; text-align: center; padding-top: 3px; font-weight: bold; }
 
     /* ── NOTEBOOK ── */
     .notebook-wrap {
       position: absolute;
-      bottom: 12%;
-      left: 8%;
+      bottom: 10%;
+      left: 10%;
       cursor: pointer;
       z-index: 10;
-      transform: rotate(-10deg);
+      transform: rotate(-4deg);
     }
-
-    .notebook-wrap:hover { transform: rotate(-5deg) scale(1.05); }
-    .notebook-wrap:hover .item-label { opacity: 1; }
-
     .notebook-body {
-      width: 58px;
-      height: 74px;
-      position: relative;
-      transition: transform 0.2s;
-    }
-
-    .notebook-cover {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to right, #7a0000 0%, #a00000 100%);
-      border-radius: 2px 4px 4px 2px;
-      box-shadow: 3px 3px 10px rgba(0,0,0,0.6);
-    }
-
-    .notebook-spine {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 8px;
-      background: #580000;
-      border-radius: 2px 0 0 2px;
-    }
-
-    .notebook-pages {
-      position: absolute;
-      top: 3px; right: -2px;
-      width: 46px;
-      bottom: 3px;
-      background: repeating-linear-gradient(
-        to bottom,
-        #f8f4e8 0px,
-        #f8f4e8 8px,
-        #e8e4d0 8px,
-        #e8e4d0 9px
-      );
-      border-radius: 0 2px 2px 0;
-    }
-
-    .notebook-title {
-      position: absolute;
-      top: 20px;
-      left: 10px;
-      right: 4px;
+      width: 70px;
+      height: 95px;
+      background: #901A1A;
+      border-radius: 4px 8px 8px 4px;
+      border-left: 12px solid #601010;
+      box-shadow: 6px 8px 18px rgba(0,0,0,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #E0C080;
       font-family: 'VT323', monospace;
-      font-size: 9px;
-      color: #f0d080;
+      font-size: 12px;
       text-align: center;
-      line-height: 1.3;
-      letter-spacing: 0.5px;
     }
 
-    /* ── COFFEE MUG (easter egg) ── */
+    /* ── COFFEE MUG ── */
     .mug-wrap {
       position: absolute;
-      bottom: 42%;
-      right: 22%;
+      bottom: 40%;
+      right: 25%;
       cursor: pointer;
       z-index: 10;
     }
-
-    .mug-wrap:hover .item-label { opacity: 1; }
-    .mug-wrap:hover .mug-body { filter: brightness(1.1); }
-
-    .mug-steam {
-      display: flex;
-      justify-content: center;
-      gap: 4px;
-      height: 14px;
-      margin-bottom: 1px;
-    }
-
-    .steam-line {
-      width: 2px;
-      height: 14px;
-      background: linear-gradient(to top, rgba(200,180,160,0.5), transparent);
-      border-radius: 1px;
-      animation: steam 2s ease-in-out infinite;
-    }
-
-    .steam-line:nth-child(2) { animation-delay: 0.3s; }
-    .steam-line:nth-child(3) { animation-delay: 0.6s; }
-
-    @keyframes steam {
-      0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.6; }
-      50% { transform: translateY(-4px) scaleX(0.5); opacity: 0; }
-    }
-
     .mug-body {
-      width: 30px;
-      height: 34px;
-      background: linear-gradient(135deg, #2a2a3a, #1a1a28);
-      border-radius: 2px 2px 5px 5px;
+      width: 35px;
+      height: 42px;
+      background: #333;
+      border-radius: 3px 3px 10px 10px;
       position: relative;
-      border: 1.5px solid #3a3a50;
-      box-shadow: 1px 2px 6px rgba(0,0,0,0.5);
-      transition: filter 0.2s;
+      box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
     }
+    .mug-hnd { position: absolute; right: -11px; top: 6px; width: 14px; height: 22px; border: 4px solid #333; border-left: none; border-radius: 0 12px 12px 0; }
 
-    .mug-handle {
-      position: absolute;
-      right: -8px;
-      top: 6px;
-      width: 10px;
-      height: 18px;
-      border: 3px solid #3a3a50;
-      border-radius: 0 8px 8px 0;
-      border-left: none;
-    }
-
-    .mug-text {
-      font-family: 'VT323', monospace;
-      font-size: 8px;
-      color: rgba(200,230,200,0.7);
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .mug-base {
-      width: 34px;
-      height: 4px;
-      background: #1a1a28;
-      border-radius: 0 0 4px 4px;
-      margin: 0 auto;
-    }
-
-    /* ── OVERLAYS ── */
+    /* ── OVERLAYS (SYSTEM 6 STYLE) ── */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 200;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s;
-      backdrop-filter: blur(4px);
+      transition: opacity 0.25s;
+      backdrop-filter: blur(1px);
     }
+    .overlay.active { opacity: 1; pointer-events: all; }
 
-    .overlay.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    /* Classic Mac window */
     .mac-window {
-      background: var(--cream);
-      border: 2px solid #808080;
-      border-radius: 8px 8px 4px 4px;
-      width: min(520px, 92vw);
+      background: #FFF;
+      border: 1px solid #000;
+      width: min(580px, 92vw);
       max-height: 85vh;
       overflow: hidden;
-      box-shadow:
-        0 20px 60px rgba(0,0,0,0.7),
-        inset 0 0 0 1px rgba(255,255,255,0.5);
+      box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      animation: windowOpen 0.2s ease;
+      transform: scale(0.95);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.2), opacity 0.2s;
     }
-
-    @keyframes windowOpen {
-      from { transform: scale(0.9); opacity: 0.5; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    .overlay.active .mac-window { transform: scale(1); opacity: 1; }
 
     .window-titlebar {
-      background: linear-gradient(to bottom, #c8c0b0, #b0a898);
-      border-bottom: 2px solid #909090;
-      border-radius: 6px 6px 0 0;
-      padding: 6px 10px;
+      height: 24px;
+      background: #FFF;
+      border-bottom: 1px solid #000;
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
+      position: relative;
+      background-image: repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 3px);
+      background-size: 100% 12px;
+      background-position: center;
+      background-repeat: no-repeat;
     }
-
-    .window-dots {
-      display: flex;
-      gap: 5px;
-    }
-
-    .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.25);
-      cursor: pointer;
-      transition: filter 0.15s;
-    }
-    .dot:hover { filter: brightness(0.85); }
-    .dot.close { background: #ff5f57; }
-    .dot.min   { background: #febc2e; }
-    .dot.max   { background: #28c840; }
-
     .window-title {
-      flex: 1;
-      text-align: center;
-      font-family: 'VT323', monospace;
-      font-size: 15px;
-      color: #2a2010;
-      letter-spacing: 1px;
+      background: #FFF;
+      margin: 0 auto;
+      padding: 0 12px;
+      font-family: 'Special Elite', serif;
+      font-size: 13px;
+      font-weight: bold;
+      color: #000;
+      z-index: 2;
     }
+    .close-box {
+      position: absolute;
+      left: 6px;
+      top: 5px;
+      width: 14px;
+      height: 14px;
+      background: #FFF;
+      border: 1px solid #000;
+      cursor: pointer;
+      z-index: 3;
+    }
+    .close-box:active { background: #000; }
 
-    .window-body {
-      padding: 24px 28px;
-      overflow-y: auto;
-      flex: 1;
-    }
+    .window-body { padding: 35px; overflow-y: auto; flex: 1; color: #000; }
+    .window-body p { font-size: 16px; line-height: 1.6; margin-bottom: 20px; }
 
     /* Finder-style list */
-    .finder-list {
-      border: 1px solid #b0a890;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
     .finder-item {
-      padding: 10px 14px;
-      border-bottom: 1px solid #ddd8c8;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      transition: background 0.1s, color 0.1s;
+      padding: 10px 15px;
+      border-bottom: 1px solid #EEE;
       cursor: default;
     }
-
-    .finder-item:last-child { border-bottom: none; }
-
     .finder-item:hover {
-      background: #1a1a8a;
-      color: white;
+      background: #000;
+      color: #FFF;
     }
+    .fi-name { font-weight: bold; font-size: 15px; }
+    .fi-info { font-family: 'VT323', monospace; font-size: 14px; opacity: 0.8; }
 
-    .finder-item:hover .fi-sub { color: rgba(255,255,255,0.7); }
-
-    .fi-icon { font-size: 20px; flex-shrink: 0; padding-top: 2px; }
-    .fi-main { font-family: 'Special Elite', serif; font-size: 14px; font-weight: bold; }
-    .fi-sub { font-family: 'VT323', monospace; font-size: 13px; color: #666; margin-top: 2px; }
-
-    /* Text content */
-    .window-body p {
-      font-family: 'Special Elite', serif;
-      font-size: 15px;
-      color: #1a1008;
-      line-height: 1.75;
-      margin-bottom: 14px;
+    /* Contact Form */
+    .retro-form label { display: block; font-family: 'VT323', monospace; font-size: 15px; margin-bottom: 5px; }
+    .retro-form input, .retro-form textarea {
+      width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #000; font-family: 'VT323', monospace; font-size: 17px; outline: none; background: #FFF;
     }
-
-    .window-body strong { color: #4a1a00; }
-    .window-body em { color: #604020; }
-
-    /* Contact form */
-    .retro-form input,
-    .retro-form textarea {
-      display: block;
-      width: 100%;
-      padding: 8px 10px;
-      font-family: 'VT323', monospace;
-      font-size: 15px;
-      background: #fff;
-      border: 2px solid #909080;
-      border-radius: 0;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-      outline: none;
-    }
-
-    .retro-form input:focus,
-    .retro-form textarea:focus {
-      border-color: #1a1a8a;
-      box-shadow: 0 0 0 2px rgba(26,26,138,0.15);
-    }
-
-    .retro-form textarea {
-      height: 90px;
-      resize: none;
-    }
-
-    .retro-form label {
-      font-family: 'VT323', monospace;
-      font-size: 13px;
-      color: #444;
-      display: block;
-      margin-bottom: 3px;
-      letter-spacing: 1px;
-    }
-
     .retro-btn {
-      background: linear-gradient(to bottom, #d0c8a8, #b0a880);
-      border: 2px solid #808060;
-      border-radius: 4px;
-      padding: 8px 22px;
-      font-family: 'VT323', monospace;
-      font-size: 16px;
-      letter-spacing: 2px;
-      cursor: pointer;
-      box-shadow: 2px 2px 0 #606040;
-      color: #1a1008;
-      margin-top: 4px;
+      background: #FFF; border: 1px solid #000; padding: 10px 30px; font-family: 'VT323', monospace; font-size: 20px; cursor: pointer; box-shadow: 4px 4px 0 #000;
     }
+    .retro-btn:active { box-shadow: 2px 2px 0 #000; transform: translate(2px, 2px); }
 
-    .retro-btn:active {
-      box-shadow: none;
-      transform: translate(2px, 2px);
+    /* ── PONG STYLING ── */
+    #pong-canvas {
+      background: #0a0a0a;
+      display: block;
+      margin: 0 auto;
+      max-width: 100%;
+      cursor: none;
     }
-
-    .email-display {
-      font-family: 'VT323', monospace;
-      font-size: 16px;
-      color: #1a1a8a;
-      background: #e8f0ff;
-      border: 1px solid #8080c0;
-      padding: 6px 12px;
-      margin-bottom: 16px;
-      letter-spacing: 1px;
+    .pong-container {
+      background: #000;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
-
-    /* Nav hint */
-    .hint {
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: rgba(255,255,255,0.35);
+    .pong-overlay-msg {
+      position: absolute;
+      color: var(--screen-green);
       font-family: 'VT323', monospace;
-      font-size: 14px;
-      letter-spacing: 3px;
+      font-size: 24px;
+      text-align: center;
       pointer-events: none;
-      white-space: nowrap;
-      animation: hintFade 5s ease 2s forwards;
-      opacity: 0;
     }
 
-    @keyframes hintFade {
-      0%   { opacity: 0; }
-      15%  { opacity: 1; }
-      70%  { opacity: 1; }
-      100% { opacity: 0.3; }
-    }
+    /* Scaling logic */
+    @media (max-width: 1000px) { .scene-scale-wrapper { transform: scale(calc(100vw / 1000)); } }
+    @media (max-height: 800px) { .scene-scale-wrapper { transform: scale(calc(100vh / 800)); } }
+    @media (max-width: 1000px) and (max-height: 800px) { .scene-scale-wrapper { transform: scale(min(calc(100vw / 1000), calc(100vh / 800))); } }
 
-    /* Name in corner */
-    .name-plate {
-      position: fixed;
-      top: 20px;
-      right: 24px;
-      font-family: 'VT323', monospace;
-      font-size: 11px;
-      color: rgba(200,160,64,0.5);
-      letter-spacing: 3px;
-      text-align: right;
-    }
   </style>
 </head>
 <body>
 
-<div class="scene">
+<div class="viewport-container">
+  <div class="scene-scale-wrapper">
+    <div class="scene">
+      
+      <div class="wall-hint">DISCOVER THE ARTIFACTS</div>
 
-  <!-- Wall -->
-  <div class="wall">
-    <div class="wall-art">
-      <div class="wall-art-line"></div>
-      <div class="wall-art-text">FORENSIC<br>CYBERPSYCHOLOGY<br>LAB</div>
-      <div class="wall-art-line"></div>
-    </div>
-  </div>
+      <!-- Desk Surface -->
+      <div class="desk"></div>
 
-  <!-- Desk -->
-  <div class="desk"></div>
+      <!-- Papers -->
+      <div class="paper paper-1"></div>
+      <div class="paper paper-2"></div>
 
-  <!-- ═══ MAC COMPUTER ═══ -->
-  <div class="mac-wrap" onclick="open_('services')">
-    <div class="glow-ring"></div>
-    <div class="mac-body">
-      <div class="mac-bezel">
-        <div class="mac-screen">
-          <div class="screen-text" id="screenText"></div>
+      <!-- MAC -->
+      <div class="mac-wrap" id="macClicker">
+        <div class="mac-body">
+          <div class="mac-screen-area">
+            <div class="mac-screen">
+              <div class="screen-text" id="screenText"></div>
+              <div class="pong-hint">PONG.EXE</div>
+              <!-- Clickable mask only for screen -->
+              <div class="screen-click-mask" id="screenPongBtn"></div>
+            </div>
+          </div>
+          <div class="mac-logo-area">
+            <div class="mac-drive-slot"></div>
+            <div class="mac-model">Macintosh Plus</div>
+          </div>
         </div>
+        <div class="mac-stand"></div>
+        <div class="item-label">SERVICES</div>
       </div>
-      <div class="mac-logo-strip">
-        <div class="mac-drive-slot"></div>
-        <div class="mac-model-text">Macintosh</div>
+
+      <!-- KEYBOARD -->
+      <div class="keyboard-wrap" onclick="open_('about')">
+        <div class="keyboard-body">
+          <div class="key-row"><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div></div>
+          <div class="key-row"><div class="key wide"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key"></div><div class="key wide"></div></div>
+          <div class="key-row"><div class="key wide"></div><div class="key space"></div><div class="key wide"></div></div>
+        </div>
+        <div class="item-label">ABOUT ERIN</div>
       </div>
-    </div>
-    <div class="mac-stand"></div>
-    <div class="mac-base"></div>
-    <div class="item-label">► SERVICES</div>
-  </div>
 
-  <!-- ═══ KEYBOARD ═══ -->
-  <div class="keyboard-wrap" onclick="open_('about')">
-    <div class="keyboard-body">
-      <div class="key-row">
-        <div class="key"></div><div class="key"></div><div class="key"></div>
-        <div class="key"></div><div class="key"></div><div class="key"></div>
-        <div class="key"></div><div class="key"></div><div class="key"></div>
-        <div class="key"></div><div class="key"></div><div class="key"></div>
-        <div class="key"></div>
+      <!-- MOUSE -->
+      <div class="mouse-wrap" onclick="open_('home')">
+        <div class="mouse-body"><div class="mouse-btn"></div></div>
+        <div class="item-label">HOME</div>
       </div>
-      <div class="key-row">
-        <div class="key wider"></div><div class="key"></div><div class="key"></div>
-        <div class="key"></div><div class="key"></div><div class="key"></div>
-        <div class="key"></div><div class="key"></div><div class="key"></div>
-        <div class="key wide"></div>
+
+      <!-- ENVELOPE -->
+      <div class="envelope-wrap" onclick="open_('contact')">
+        <div class="envelope-body"><div class="env-flap"></div></div>
+        <div class="item-label">CONTACT</div>
       </div>
-      <div class="key-row">
-        <div class="key wide"></div><div class="key space"></div>
-        <div class="key wide"></div>
+
+      <!-- FLOPPY -->
+      <div class="floppy-wrap" onclick="open_('research')">
+        <div class="floppy-body"><div class="floppy-lbl">CASE FILES</div></div>
+        <div class="item-label">RESEARCH</div>
       </div>
-    </div>
-    <div class="item-label" style="bottom:-28px;">► ABOUT</div>
-  </div>
 
-  <!-- ═══ MOUSE ═══ -->
-  <div class="mouse-wrap" onclick="open_('home')">
-    <div class="mouse-cord"></div>
-    <div class="mouse-body">
-      <div class="mouse-button"></div>
-      <div class="mouse-btn-line"></div>
-    </div>
-    <div class="item-label" style="bottom:-26px;">► HOME</div>
-  </div>
+      <!-- NOTEBOOK -->
+      <div class="notebook-wrap" onclick="open_('cv')">
+        <div class="notebook-body">C.V.</div>
+        <div class="item-label">RESUME</div>
+      </div>
 
-  <!-- ═══ ENVELOPE ═══ -->
-  <div class="envelope-wrap" onclick="open_('contact')">
-    <div class="envelope-body">
-      <div class="env-flap"></div>
-      <div class="env-bottom-left"></div>
-      <div class="env-bottom-right"></div>
-      <div class="env-stamp">★</div>
-    </div>
-    <div class="item-label" style="bottom:-26px;">► CONTACT</div>
-  </div>
+      <!-- MUG -->
+      <div class="mug-wrap" onclick="open_('easter')">
+        <div class="mug-body"><div class="mug-hnd"></div></div>
+        <div class="item-label">CAFFEINE</div>
+      </div>
 
-  <!-- ═══ FLOPPY DISK ═══ -->
-  <div class="floppy-wrap" onclick="open_('research')">
-    <div class="floppy-body">
-      <div class="floppy-label-area">CASE<br>FILES.dsk</div>
-      <div class="floppy-notch"></div>
-      <div class="floppy-shutter"></div>
     </div>
-    <div class="item-label" style="bottom:-26px;">► RESEARCH</div>
   </div>
-
-  <!-- ═══ NOTEBOOK ═══ -->
-  <div class="notebook-wrap" onclick="open_('cv')">
-    <div class="notebook-body">
-      <div class="notebook-cover"></div>
-      <div class="notebook-spine"></div>
-      <div class="notebook-pages"></div>
-      <div class="notebook-title">CURR.<br>VITAE</div>
-    </div>
-    <div class="item-label" style="bottom:-26px; left:10px;">► C.V.</div>
-  </div>
-
-  <!-- ═══ COFFEE MUG ═══ -->
-  <div class="mug-wrap" onclick="open_('easter')">
-    <div class="mug-steam">
-      <div class="steam-line"></div>
-      <div class="steam-line"></div>
-      <div class="steam-line"></div>
-    </div>
-    <div class="mug-body">
-      <div class="mug-handle"></div>
-      <div class="mug-text">☕</div>
-    </div>
-    <div class="mug-base"></div>
-    <div class="item-label" style="bottom:-26px;">► ???</div>
-  </div>
-
 </div>
 
-<!-- ═══ HINT ═══ -->
-<div class="hint">CLICK ANYTHING ON THE DESK TO EXPLORE</div>
-<div class="name-plate">ERIN STEPHENS<br>FORENSIC RESEARCHER</div>
+<!-- OVERLAYS -->
 
-<!-- ═══════════════════ OVERLAYS ═══════════════════ -->
-
-<!-- SERVICES -->
 <div class="overlay" id="ov-services">
   <div class="mac-window">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('services')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">📁 Services — Erin Stephens</div>
-      <div style="width:52px;"></div>
-    </div>
-    <div class="window-body">
-      <div class="finder-list">
-        <div class="finder-item">
-          <div class="fi-icon">🔍</div>
-          <div>
-            <div class="fi-main">Forensic Research</div>
-            <div class="fi-sub">Behavioral & financial pattern analysis — crypto, dark web, online offending</div>
-          </div>
-        </div>
-        <div class="finder-item">
-          <div class="fi-icon">🌐</div>
-          <div>
-            <div class="fi-main">OSINT & Cryptocurrency Forensics</div>
-            <div class="fi-sub">Tracing digital footprints across open and closed-source data</div>
-          </div>
-        </div>
-        <div class="finder-item">
-          <div class="fi-icon">🎓</div>
-          <div>
-            <div class="fi-main">Training & Education</div>
-            <div class="fi-sub">Law enforcement support — ICAC investigation & prosecution</div>
-          </div>
-        </div>
-        <div class="finder-item">
-          <div class="fi-icon">🧠</div>
-          <div>
-            <div class="fi-main">Cyberpsychology Consulting</div>
-            <div class="fi-sub">The behavioral science of how people hide — and how they're found</div>
-          </div>
-        </div>
-        <div class="finder-item">
-          <div class="fi-icon">📊</div>
-          <div>
-            <div class="fi-main">Expert Analysis & Reports</div>
-            <div class="fi-sub">Court-ready documentation, case support & expert testimony</div>
-          </div>
-        </div>
-      </div>
+    <div class="window-titlebar"><div class="close-box" onclick="close_('services')"></div><div class="window-title">Forensic Services</div></div>
+    <div class="window-body" style="padding:0;">
+      <div class="finder-item"><div class="fi-name">Forensic Research</div><div class="fi-info">Behavioral & financial pattern analysis — crypto, dark web, online offending</div></div>
+      <div class="finder-item"><div class="fi-name">OSINT & Cryptocurrency Forensics</div><div class="fi-info">Tracing digital footprints across open and closed-source data</div></div>
+      <div class="finder-item"><div class="fi-name">Training & Education</div><div class="fi-info">Law enforcement support — ICAC investigation & prosecution</div></div>
+      <div class="finder-item"><div class="fi-name">Cyberpsychology Consulting</div><div class="fi-info">The behavioral science of how people hide — and how they're found</div></div>
+      <div class="finder-item"><div class="fi-name">Expert Analysis & Reports</div><div class="fi-info">Court-ready documentation, case support & expert testimony</div></div>
     </div>
   </div>
 </div>
 
-<!-- ABOUT -->
 <div class="overlay" id="ov-about">
   <div class="mac-window">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('about')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">👤 About — Erin Stephens</div>
-      <div style="width:52px;"></div>
-    </div>
+    <div class="window-titlebar"><div class="close-box" onclick="close_('about')"></div><div class="window-title">About Erin Stephens</div></div>
     <div class="window-body">
-      <p>I'm <strong>Erin Stephens</strong> — researcher, forensic analyst, and doctoral candidate in forensic cyberpsychology.</p>
-      <p>My work lives at the crossroads of <em>how people behave, how they hide, and how they get found.</em></p>
-      <p>I bring investigative rigor, pattern recognition, and deep domain expertise to cybersecurity, digital forensics, and the behavioral study of online offending.</p>
-      <p>Docka Research exists because this work matters — and because the right tools, in the right hands, change outcomes.</p>
+      <p>I'm <strong>Erin Stephens</strong> — forensic researcher and doctoral candidate in forensic cyberpsychology.</p>
+      <p>My work lives at the intersection of human behavior and digital shadows. I specialize in finding what (and who) intends to remain hidden.</p>
+      <p>Based in Montecito, CA, I support global investigations and law enforcement training with a focus on behavioral patterns in emerging tech.</p>
     </div>
   </div>
 </div>
 
-<!-- CONTACT -->
 <div class="overlay" id="ov-contact">
   <div class="mac-window">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('contact')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">📬 Contact — Send a Message</div>
-      <div style="width:52px;"></div>
-    </div>
+    <div class="window-titlebar"><div class="close-box" onclick="close_('contact')"></div><div class="window-title">Message Dispatch</div></div>
     <div class="window-body">
-      <div class="email-display">erin@dockaresearch.com</div>
+      <p style="font-family:VT323; border-bottom:1px solid #000; padding-bottom:10px;">TO: erin@dockaresearch.com</p>
       <form class="retro-form" onsubmit="return false;">
-        <label>NAME:</label>
-        <input type="text" placeholder="Your name" />
-        <label>EMAIL:</label>
-        <input type="email" placeholder="your@email.com" />
-        <label>MESSAGE:</label>
-        <textarea placeholder="What's on your mind?"></textarea>
-        <button class="retro-btn" type="submit">[ SEND MESSAGE ]</button>
+        <label>NAME</label><input type="text">
+        <label>EMAIL</label><input type="email">
+        <label>MESSAGE</label><textarea rows="4"></textarea>
+        <button class="retro-btn">SEND MESSAGE</button>
       </form>
     </div>
   </div>
 </div>
 
-<!-- RESEARCH -->
 <div class="overlay" id="ov-research">
   <div class="mac-window">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('research')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">💾 Research & Case Files</div>
-      <div style="width:52px;"></div>
-    </div>
+    <div class="window-titlebar"><div class="close-box" onclick="close_('research')"></div><div class="window-title">Case Files</div></div>
     <div class="window-body">
-      <p style="font-family:'VT323',monospace; font-size:14px; color:#666; letter-spacing:2px;">[READING DISK... LOADING CASE FILES...]</p>
-      <p>Current research focuses on <strong>behavioral fingerprinting</strong> of online offenders operating in cryptocurrency ecosystems and dark web markets.</p>
-      <p>Bridging forensic psychology, OSINT tradecraft, and blockchain analysis to identify patterns invisible to conventional investigation.</p>
-      <p><em>Case studies and publications — forthcoming.</em></p>
+      <p><strong>Behavioral Fingerprinting</strong></p>
+      <p>Identifying patterns of life and psychological markers in digital transactions and communications.</p>
+      <p><em>Projects include cryptocurrency tracing for ICAC cases and darknet market behavioral analysis.</em></p>
+      <p style="opacity:0.4; font-size:12px; margin-top:40px;">[ACCESS RESTRICTED — CONTACT FOR REPOSITORY ACCESS]</p>
     </div>
   </div>
 </div>
 
-<!-- HOME -->
-<div class="overlay" id="ov-home">
-  <div class="mac-window">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('home')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">🏠 Welcome</div>
-      <div style="width:52px;"></div>
-    </div>
-    <div class="window-body">
-      <p><strong>Forensic research at the intersection of human behavior and emerging technology.</strong></p>
-      <p>Explore the desk:</p>
-      <p>
-        🖥️ <strong>Computer</strong> → Services<br>
-        ⌨️ <strong>Keyboard</strong> → About<br>
-        🖱️ <strong>Mouse</strong> → You're here<br>
-        📬 <strong>Envelope</strong> → Contact<br>
-        💾 <strong>Floppy disk</strong> → Research<br>
-        📓 <strong>Red notebook</strong> → C.V.<br>
-        ☕ <strong>Coffee mug</strong> → Find out
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- CV -->
 <div class="overlay" id="ov-cv">
   <div class="mac-window">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('cv')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">📓 Curriculum Vitae</div>
-      <div style="width:52px;"></div>
-    </div>
+    <div class="window-titlebar"><div class="close-box" onclick="close_('cv')"></div><div class="window-title">Curriculum Vitae</div></div>
     <div class="window-body">
-      <p style="font-family:'VT323',monospace; color:#888; font-size:13px; letter-spacing:2px;">[CLASSIFIED — LEVEL 4 CLEARANCE REQUIRED]</p>
-      <p>Doctoral candidate, <strong>forensic cyberpsychology</strong>.</p>
-      <p>Forensic analyst · OSINT specialist · Cryptocurrency investigator · Educator for law enforcement agencies.</p>
-      <p><em>Full C.V. available upon request — click the envelope on the desk.</em></p>
+      <p>Key Expertise:</p>
+      <ul>
+        <li>Forensic Cyberpsychology Research</li>
+        <li>OSINT Methodology & Training</li>
+        <li>Crypto-Asset Recovery & Analysis</li>
+        <li>Behavioral Pattern Identification</li>
+      </ul>
+      <br>
+      <p>Full academic and professional history available upon request.</p>
     </div>
   </div>
 </div>
 
-<!-- EASTER EGG -->
-<div class="overlay" id="ov-easter">
-  <div class="mac-window" style="max-width:380px;">
-    <div class="window-titlebar">
-      <div class="window-dots">
-        <div class="dot close" onclick="close_('easter')"></div>
-        <div class="dot min"></div>
-        <div class="dot max"></div>
-      </div>
-      <div class="window-title">☕ Dark Roast</div>
-      <div style="width:52px;"></div>
-    </div>
+<div class="overlay" id="ov-home">
+  <div class="mac-window">
+    <div class="window-titlebar"><div class="close-box" onclick="close_('home')"></div><div class="window-title">Desktop Guide</div></div>
     <div class="window-body">
-      <p style="text-align:center; font-size:40px; margin-bottom:8px;">☕</p>
-      <p style="text-align:center;"><strong>Fuel source: identified.</strong></p>
-      <p style="text-align:center; font-family:'VT323',monospace; font-size:14px; color:#666;">
-        All forensic breakthroughs<br>powered by strong coffee<br>and pattern recognition.
-      </p>
+      <p>Welcome to Docka Research.</p>
+      <p>• <strong>Mac</strong>: Professional Services / Pong<br>• <strong>Keyboard</strong>: Personal Background<br>• <strong>Floppy Disk</strong>: Research Portfolio<br>• <strong>Notebook</strong>: CV & Expertise<br>• <strong>Envelope</strong>: Direct Inquiry</p>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-easter">
+  <div class="mac-window" style="width:300px;">
+    <div class="window-titlebar"><div class="close-box" onclick="close_('easter')"></div><div class="window-title">Alert</div></div>
+    <div class="window-body" style="text-align:center;">
+      <p style="font-size:32px;">☕</p>
+      <p>Refilling stimulant levels...</p>
+    </div>
+  </div>
+</div>
+
+<!-- PONG OVERLAY -->
+<div class="overlay" id="ov-pong">
+  <div class="mac-window" style="width:640px;">
+    <div class="window-titlebar"><div class="close-box" onclick="closePong()"></div><div class="window-title">Pong v1.0 — Docka Systems</div></div>
+    <div class="window-body pong-container" style="padding:0;">
+      <canvas id="pong-canvas" width="600" height="400"></canvas>
+      <div id="pong-msg" class="pong-overlay-msg">PRESS ANY KEY TO START</div>
     </div>
   </div>
 </div>
 
 <script>
-  // ── Typewriter on Mac screen ──
-  const screen = document.getElementById('screenText');
-  const lines = [
-    'SYSTEM BOOT...',
-    'LOADING...',
-    '',
-    'Hello.',
-    '',
-    "I'm Erin Stephens.",
-    'Forensic researcher.',
-    'I find what hides.',
-    '',
-    '> click to explore_'
+  // ── SCREEN TYPEWRITER ──
+  const screenTxt = document.getElementById('screenText');
+  const bootLines = [
+    'BOOT...', '', 'Hello.', "I'm Erin Stephens.", 'Forensic researcher.', 'I find what hides.', '', '> explore the desk_'
   ];
-
-  let li = 0, ci = 0, html = '';
-
+  let lIdx = 0, cIdx = 0, html = '';
   function type() {
-    if (li >= lines.length) {
-      screen.innerHTML = html.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
-      return;
-    }
-    const line = lines[li];
-    if (ci < line.length) {
-      html += line[ci++];
-      screen.innerHTML = html.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
-      setTimeout(type, ci === 1 ? 500 : (line === 'SYSTEM BOOT...' || line === 'LOADING...' ? 60 : 55));
-    } else {
-      html += '\n';
-      li++; ci = 0;
-      screen.innerHTML = html.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
-      setTimeout(type, li >= lines.length ? 0 : (lines[li] === '' ? 120 : 300));
+    if (lIdx < bootLines.length) {
+      let l = bootLines[lIdx];
+      if (cIdx < l.length) { html += l[cIdx]; screenTxt.innerHTML = html.replace(/\n/g, '<br>') + '<span class="cursor-blink"></span>'; cIdx++; setTimeout(type, 60); }
+      else { html += '<br>'; lIdx++; cIdx = 0; setTimeout(type, 400); }
     }
   }
+  setTimeout(type, 1000);
 
-  setTimeout(type, 800);
-
-  // ── Overlays ──
-  function open_(id) {
-    document.getElementById('ov-' + id).classList.add('active');
-  }
-
-  function close_(id) {
-    document.getElementById('ov-' + id).classList.remove('active');
-  }
+  // ── MODAL LOGIC ──
+  function open_(id) { document.getElementById('ov-' + id).classList.add('active'); if(id==='pong') initPong(); }
+  function close_(id) { document.getElementById('ov-' + id).classList.remove('active'); }
+  
+  // Mac interaction logic
+  document.getElementById('macClicker').onclick = (e) => open_('services');
+  document.getElementById('screenPongBtn').onclick = (e) => { e.stopPropagation(); open_('pong'); };
 
   document.querySelectorAll('.overlay').forEach(ov => {
-    ov.addEventListener('click', e => {
-      if (e.target === ov) ov.classList.remove('active');
-    });
+    ov.addEventListener('click', e => { if (e.target === ov) { if(ov.id==='ov-pong') closePong(); else ov.classList.remove('active'); } });
   });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePong(); document.querySelectorAll('.overlay.active').forEach(ov => ov.classList.remove('active')); } });
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape')
-      document.querySelectorAll('.overlay.active').forEach(o => o.classList.remove('active'));
+  // ── PONG GAME ENGINE ──
+  const canvas = document.getElementById('pong-canvas');
+  const ctx = canvas.getContext('2d');
+  const msg = document.getElementById('pong-msg');
+  let animationId;
+  let gameState = 'START';
+  let pScore = 0, cScore = 0;
+
+  const ball = { x: 300, y: 200, r: 6, vx: 4, vy: 4, speed: 4 };
+  const player = { x: 20, y: 160, w: 10, h: 80, vy: 0 };
+  const cpu = { x: 570, y: 160, w: 10, h: 80 };
+
+  function initPong() {
+    pScore = 0; cScore = 0; resetBall(); gameState = 'START';
+    msg.style.display = 'block'; msg.innerText = 'PRESS ANY KEY TO START';
+    if(!animationId) loop();
+  }
+
+  function closePong() {
+    cancelAnimationFrame(animationId); animationId = null;
+    close_('pong');
+  }
+
+  function resetBall() {
+    ball.x = canvas.width/2; ball.y = canvas.height/2;
+    ball.vx = (Math.random() > 0.5 ? 1 : -1) * 4;
+    ball.vy = (Math.random() - 0.5) * 6;
+    ball.speed = 4;
+  }
+
+  window.addEventListener('keydown', e => {
+    if (gameState === 'START' || gameState === 'END') { gameState = 'PLAYING'; msg.style.display = 'none'; }
+    if (e.key === 'w' || e.key === 'W') player.vy = -6;
+    if (e.key === 's' || e.key === 'S') player.vy = 6;
   });
+  window.addEventListener('keyup', e => { if (e.key === 'w' || e.key === 's' || e.key === 'W' || e.key === 'S') player.vy = 0; });
+
+  // Touch Support
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touchY = e.touches[0].clientY - rect.top;
+    player.y = (touchY * (canvas.height / rect.height)) - player.h/2;
+    if (gameState === 'START') { gameState = 'PLAYING'; msg.style.display = 'none'; }
+  }, {passive: false});
+
+  function update() {
+    if (gameState !== 'PLAYING') return;
+
+    // Player Move
+    player.y += player.vy;
+    if (player.y < 0) player.y = 0;
+    if (player.y > canvas.height - player.h) player.y = canvas.height - player.h;
+
+    // CPU Move (slight delay)
+    let target = ball.y - cpu.h/2;
+    cpu.y += (target - cpu.y) * 0.12;
+    if (cpu.y < 0) cpu.y = 0;
+    if (cpu.y > canvas.height - cpu.h) cpu.y = canvas.height - cpu.h;
+
+    // Ball Move
+    ball.x += ball.vx; ball.y += ball.vy;
+
+    // Wall Bounce
+    if (ball.y < 0 || ball.y > canvas.height) ball.vy *= -1;
+
+    // Paddle Hit
+    let p = (ball.x < canvas.width/2) ? player : cpu;
+    if (ball.x + ball.r > p.x && ball.x - ball.r < p.x + p.w && ball.y > p.y && ball.y < p.y + p.h) {
+      let collidePoint = (ball.y - (p.y + p.h/2)) / (p.h/2);
+      let angle = collidePoint * Math.PI/4;
+      let dir = (ball.x < canvas.width/2) ? 1 : -1;
+      ball.speed += 0.2;
+      ball.vx = dir * ball.speed * Math.cos(angle);
+      ball.vy = ball.speed * Math.sin(angle);
+    }
+
+    // Score
+    if (ball.x < 0) { cScore++; resetBall(); }
+    if (ball.x > canvas.width) { pScore++; resetBall(); }
+
+    if (pScore >= 7 || cScore >= 7) {
+      gameState = 'END';
+      msg.style.display = 'block';
+      msg.innerHTML = (pScore >= 7 ? 'YOU WIN!' : 'CPU WINS') + '<br><span style="font-size:14px">CLICK TO PLAY AGAIN</span>';
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Net
+    ctx.strokeStyle = '#33ff33'; ctx.setLineDash([10, 10]);
+    ctx.beginPath(); ctx.moveTo(canvas.width/2, 0); ctx.lineTo(canvas.width/2, canvas.height); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Scores
+    ctx.fillStyle = '#33ff33'; ctx.font = '40px VT323';
+    ctx.fillText(pScore, canvas.width/4, 50); ctx.fillText(cScore, 3*canvas.width/4, 50);
+
+    // Paddles & Ball
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+    ctx.fillRect(cpu.x, cpu.y, cpu.w, cpu.h);
+    ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
+
+    // Scanlines
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    for(let i=0; i<canvas.height; i+=4) ctx.fillRect(0, i, canvas.width, 2);
+  }
+
+  function loop() { update(); draw(); animationId = requestAnimationFrame(loop); }
+
 </script>
+
 </body>
 </html>
