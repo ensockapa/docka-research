@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Erin Stephens — Forensic Researcher</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Special+Elite&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --wood-dark: #3d1f0a;
+      --wood-mid: #6b3a1a;
+      --wood-light: #8b5022;
+      --desk-surface: #a8671e;
+      --mac-beige: #d4c8a8;
+      --mac-shadow: #a89878;
+      --screen-bg: #0d0d0d;
+      --screen-green: #c8e8a0;
+      --cream: #f0ead8;
+      --gold: #c8a040;
+    }
+
+    body {
+      font-family: 'Special Elite', serif;
+      background: var(--wood-dark);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+      user-select: none;
+    }
+
+    /* ── SCENE ── */
+    .scene {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background:
+        radial-gradient(ellipse at 50% 0%, #1a0a03 0%, #3d1f0a 60%),
+        #3d1f0a;
+    }
+
+    /* Wall */
+    .wall {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 58%;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,0.015) 0px,
+          rgba(255,255,255,0.015) 1px,
+          transparent 1px,
+          transparent 60px
+        ),
+        linear-gradient(to bottom, #1c0e05, #2a1408);
+    }
+
+    /* Subtle wall poster */
+    .wall-art {
+      position: absolute;
+      top: 8%;
+      left: 8%;
+      width: 100px;
+      height: 130px;
+      border: 6px solid #5a3a20;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      opacity: 0.7;
+      box-shadow: 3px 3px 12px rgba(0,0,0,0.6);
+    }
+    .wall-art-line {
+      height: 1px;
+      width: 70%;
+      background: rgba(200,160,64,0.5);
+    }
+    .wall-art-text {
+      font-family: 'VT323', monospace;
+      color: rgba(200,230,200,0.7);
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    /* Desk surface */
+    .desk {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 46%;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 28px,
+          rgba(0,0,0,0.04) 28px,
+          rgba(0,0,0,0.04) 29px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent 8px,
+          rgba(255,255,255,0.01) 8px,
+          rgba(255,255,255,0.01) 9px
+        ),
+        linear-gradient(to bottom,
+          #b87828 0%,
+          #a06820 25%,
+          #8b5a18 70%,
+          #7a4e14 100%
+        );
+      border-top: 5px solid #d4921e;
+      box-shadow: 0 -6px 30px rgba(0,0,0,0.5);
+    }
+
+    /* ── MAC COMPUTER ── */
+    .mac-wrap {
+      position: absolute;
+      bottom: 42%;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .mac-wrap:hover .mac-body { filter: brightness(1.08); }
+    .mac-wrap:hover .glow-ring { opacity: 1; }
+
+    .glow-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 14px;
+      box-shadow: 0 0 20px 6px rgba(200, 232, 160, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .mac-body {
+      width: 200px;
+      background: linear-gradient(
+        135deg,
+        #e0d8c0 0%,
+        #d0c4a0 40%,
+        #c0b490 80%,
+        #b0a480 100%
+      );
+      border-radius: 14px 14px 6px 6px;
+      padding: 16px 16px 36px 16px;
+      box-shadow:
+        inset -3px -4px 12px rgba(0,0,0,0.25),
+        inset 3px 3px 10px rgba(255,255,255,0.4),
+        5px 8px 24px rgba(0,0,0,0.7);
+      position: relative;
+      border: 2px solid #a89870;
+      transition: filter 0.2s;
+    }
+
+    /* Screen bezel */
+    .mac-bezel {
+      background: #1a1610;
+      border-radius: 4px;
+      padding: 6px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    }
+
+    /* Screen */
+    .mac-screen {
+      background: var(--screen-bg);
+      height: 110px;
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 8px;
+    }
+
+    /* CRT scanline overlay */
+    .mac-screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.12) 2px,
+        rgba(0,0,0,0.12) 3px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Screen phosphor glow */
+    .mac-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, rgba(200,232,160,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .screen-text {
+      font-family: 'VT323', monospace;
+      font-size: 13px;
+      color: var(--screen-green);
+      line-height: 1.45;
+      z-index: 3;
+      position: relative;
+      text-shadow: 0 0 8px rgba(200,232,160,0.6);
+      width: 100%;
+    }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 7px;
+      height: 12px;
+      background: var(--screen-green);
+      margin-left: 1px;
+      vertical-align: middle;
+      animation: blink 0.9s step-end infinite;
+      box-shadow: 0 0 6px rgba(200,232,160,0.8);
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Apple logo area */
+    .mac-logo-strip {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mac-drive-slot {
+      width: 68px;
+      height: 5px;
+      background: #888060;
+      border-radius: 3px;
+      border: 1px solid #665040;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .mac-model-text {
+      font-family: 'VT323', monospace;
+      font-size: 10px;
+      color: #807060;
+      letter-spacing: 1px;
+    }
+
+    /* Stand */
+    .mac-stand {
+      width: 110px;
+      height: 16px;
+      background: linear-gradient(to bottom, #c0b498, #a89878);
+      margin: 0 auto;
+      border-radius: 0 0 6px 6px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .mac-base {
+      width: 150px;
+      height: 8px;
+      background: linear-gradient(to bottom, #a89878, #887858);
+      margin: 0 auto;
+      border-radius: 0 0 5px 5px;
+      box-shadow: 2px 4px 12px rgba(0,0,0,0.6);
+    }
+
+    /* Hover tooltip */
+    .item-label {
+      position: absolute;
+      bottom: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      padding: 3px 10px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.25s;
+      letter-spacing: 2px;
+      pointer-events: none;
+    }
+
+    .mac-wrap:hover .item-label { opacity: 1; }
+
+    /* ── KEYBOARD ── */
+    .keyboard-wrap {
+      position: absolute;
+      bottom: 7%;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .keyboard-wrap:hover .keyboard-body { filter: brightness(1.1); }
+    .keyboard-wrap:hover .item-label { opacity: 1; }
+
+    .keyboard-body {
+      width: 210px;
+      height: 58px;
+      background: linear-gradient(to bottom, #d0c4a0, #b8ac88);
+      border-radius: 5px;
+      border: 2px solid #a09070;
+      padding: 5px 6px;
+      box-shadow:
+        2px 4px 12px rgba(0,0,0,0.5),
+        inset 0 1px 2px rgba(255,255,255,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition: filter 0.2s;
+    }
+
+    .key-row {
+      display: flex;
+      gap: 2px;
+    }
+
+    .key {
+      flex: 1;
+      height: 13px;
+      background: linear-gradient(to bottom, #e8e0c8, #d0c8a8);
+      border-radius: 2px;
+      border: 1px solid #a89870;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.35);
+    }
+    .key.wide { flex: 1.8; }
+    .key.wider { flex: 2.5; }
+    .key.space { flex: 7; }
+
+    /* ── MOUSE ── */
+    .mouse-wrap {
+      position: absolute;
+      bottom: 8%;
+      left: calc(50% + 130px);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .mouse-wrap:hover .mouse-body { filter: brightness(1.1); }
+    .mouse-wrap:hover .item-label { opacity: 1; }
+
+    .mouse-cord {
+      width: 2px;
+      height: 34px;
+      background: linear-gradient(to bottom, #5a5040, #7a6848);
+      margin: 0 auto;
+      border-radius: 1px;
+    }
+
+    .mouse-body {
+      width: 40px;
+      height: 56px;
+      background: linear-gradient(135deg, #ddd4b8, #c8c0a0, #b8b090);
+      border-radius: 20px 20px 12px 12px;
+      border: 1.5px solid #a8a080;
+      position: relative;
+      box-shadow:
+        2px 3px 8px rgba(0,0,0,0.5),
+        inset 2px 2px 6px rgba(255,255,255,0.4);
+      transition: filter 0.2s;
+    }
+
+    .mouse-btn-line {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 1px;
+      background: rgba(0,0,0,0.2);
+    }
+
+    .mouse-button {
+      position: absolute;
+      top: 8px;
+      left: 6px;
+      right: 6px;
+      height: 18px;
+      background: rgba(0,0,0,0.08);
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid rgba(0,0,0,0.15);
+    }
+
+    /* ── ENVELOPE ── */
+    .envelope-wrap {
+      position: absolute;
+      bottom: 14%;
+      right: 18%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .envelope-wrap:hover .envelope-body { filter: brightness(1.12); }
+    .envelope-wrap:hover .item-label { opacity: 1; }
+
+    .envelope-body {
+      width: 72px;
+      height: 52px;
+      background: linear-gradient(to bottom, #f8f2e0, #e8e0c8);
+      border: 2px solid #c4a840;
+      border-radius: 2px;
+      position: relative;
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.4);
+      transition: filter 0.2s;
+    }
+
+    /* V-fold on envelope */
+    .env-flap {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 26px;
+      overflow: hidden;
+    }
+
+    .env-flap::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -2px; right: -2px;
+      height: 0;
+      border-left: 38px solid transparent;
+      border-right: 38px solid transparent;
+      border-top: 26px solid #d4b840;
+    }
+
+    .env-bottom-left {
+      position: absolute;
+      bottom: 0; left: -1px;
+      width: 0; height: 0;
+      border-left: 38px solid #e0d8a8;
+      border-top: 28px solid transparent;
+    }
+
+    .env-bottom-right {
+      position: absolute;
+      bottom: 0; right: -1px;
+      width: 0; height: 0;
+      border-right: 38px solid #d4cc9e;
+      border-top: 28px solid transparent;
+    }
+
+    .env-stamp {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      width: 14px;
+      height: 16px;
+      background: linear-gradient(135deg, #c04040, #a03030);
+      border: 1px solid #802020;
+      font-size: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f0d080;
+      font-family: 'VT323', monospace;
+    }
+
+    /* ── FLOPPY DISK ── */
+    .floppy-wrap {
+      position: absolute;
+      bottom: 17%;
+      left: 25%;
+      cursor: pointer;
+      z-index: 10;
+      transform: rotate(-6deg);
+    }
+
+    .floppy-wrap:hover { transform: rotate(0deg) scale(1.08); }
+    .floppy-wrap:hover .item-label { opacity: 1; }
+
+    .floppy-body {
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(135deg, #181828, #2a2a40);
+      border-radius: 3px 3px 6px 6px;
+      border: 1.5px solid #3a3a50;
+      position: relative;
+      box-shadow: 2px 3px 8px rgba(0,0,0,0.6);
+      transition: transform 0.2s;
+    }
+
+    .floppy-label-area {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      height: 26px;
+      background: linear-gradient(to bottom, #f0f4ff, #e0e8ff);
+      border-radius: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'VT323', monospace;
+      font-size: 8px;
+      color: #1a1a3a;
+      text-align: center;
+      line-height: 1.2;
+      font-weight: bold;
+    }
+
+    .floppy-shutter {
+      position: absolute;
+      bottom: 7px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 22px;
+      height: 16px;
+      background: linear-gradient(to bottom, #c0c0d0, #a0a0b0);
+      border-radius: 1px;
+      border: 1px solid #808090;
+    }
+
+    .floppy-notch {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: #2a2a40;
+      border-radius: 50%;
+      border: 1px solid #3a3a50;
+    }
+
+    /* ── NOTEBOOK ── */
+    .notebook-wrap {
+      position: absolute;
+      bottom: 12%;
+      left: 8%;
+      cursor: pointer;
+      z-index: 10;
+      transform: rotate(-10deg);
+    }
+
+    .notebook-wrap:hover { transform: rotate(-5deg) scale(1.05); }
+    .notebook-wrap:hover .item-label { opacity: 1; }
+
+    .notebook-body {
+      width: 58px;
+      height: 74px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .notebook-cover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, #7a0000 0%, #a00000 100%);
+      border-radius: 2px 4px 4px 2px;
+      box-shadow: 3px 3px 10px rgba(0,0,0,0.6);
+    }
+
+    .notebook-spine {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 8px;
+      background: #580000;
+      border-radius: 2px 0 0 2px;
+    }
+
+    .notebook-pages {
+      position: absolute;
+      top: 3px; right: -2px;
+      width: 46px;
+      bottom: 3px;
+      background: repeating-linear-gradient(
+        to bottom,
+        #f8f4e8 0px,
+        #f8f4e8 8px,
+        #e8e4d0 8px,
+        #e8e4d0 9px
+      );
+      border-radius: 0 2px 2px 0;
+    }
+
+    .notebook-title {
+      position: absolute;
+      top: 20px;
+      left: 10px;
+      right: 4px;
+      font-family: 'VT323', monospace;
+      font-size: 9px;
+      color: #f0d080;
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── COFFEE MUG (easter egg) ── */
+    .mug-wrap {
+      position: absolute;
+      bottom: 42%;
+      right: 22%;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .mug-wrap:hover .item-label { opacity: 1; }
+    .mug-wrap:hover .mug-body { filter: brightness(1.1); }
+
+    .mug-steam {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      height: 14px;
+      margin-bottom: 1px;
+    }
+
+    .steam-line {
+      width: 2px;
+      height: 14px;
+      background: linear-gradient(to top, rgba(200,180,160,0.5), transparent);
+      border-radius: 1px;
+      animation: steam 2s ease-in-out infinite;
+    }
+
+    .steam-line:nth-child(2) { animation-delay: 0.3s; }
+    .steam-line:nth-child(3) { animation-delay: 0.6s; }
+
+    @keyframes steam {
+      0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.6; }
+      50% { transform: translateY(-4px) scaleX(0.5); opacity: 0; }
+    }
+
+    .mug-body {
+      width: 30px;
+      height: 34px;
+      background: linear-gradient(135deg, #2a2a3a, #1a1a28);
+      border-radius: 2px 2px 5px 5px;
+      position: relative;
+      border: 1.5px solid #3a3a50;
+      box-shadow: 1px 2px 6px rgba(0,0,0,0.5);
+      transition: filter 0.2s;
+    }
+
+    .mug-handle {
+      position: absolute;
+      right: -8px;
+      top: 6px;
+      width: 10px;
+      height: 18px;
+      border: 3px solid #3a3a50;
+      border-radius: 0 8px 8px 0;
+      border-left: none;
+    }
+
+    .mug-text {
+      font-family: 'VT323', monospace;
+      font-size: 8px;
+      color: rgba(200,230,200,0.7);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .mug-base {
+      width: 34px;
+      height: 4px;
+      background: #1a1a28;
+      border-radius: 0 0 4px 4px;
+      margin: 0 auto;
+    }
+
+    /* ── OVERLAYS ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Classic Mac window */
+    .mac-window {
+      background: var(--cream);
+      border: 2px solid #808080;
+      border-radius: 8px 8px 4px 4px;
+      width: min(520px, 92vw);
+      max-height: 85vh;
+      overflow: hidden;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.7),
+        inset 0 0 0 1px rgba(255,255,255,0.5);
+      display: flex;
+      flex-direction: column;
+      animation: windowOpen 0.2s ease;
+    }
+
+    @keyframes windowOpen {
+      from { transform: scale(0.9); opacity: 0.5; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .window-titlebar {
+      background: linear-gradient(to bottom, #c8c0b0, #b0a898);
+      border-bottom: 2px solid #909090;
+      border-radius: 6px 6px 0 0;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.25);
+      cursor: pointer;
+      transition: filter 0.15s;
+    }
+    .dot:hover { filter: brightness(0.85); }
+    .dot.close { background: #ff5f57; }
+    .dot.min   { background: #febc2e; }
+    .dot.max   { background: #28c840; }
+
+    .window-title {
+      flex: 1;
+      text-align: center;
+      font-family: 'VT323', monospace;
+      font-size: 15px;
+      color: #2a2010;
+      letter-spacing: 1px;
+    }
+
+    .window-body {
+      padding: 24px 28px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Finder-style list */
+    .finder-list {
+      border: 1px solid #b0a890;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .finder-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #ddd8c8;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: background 0.1s, color 0.1s;
+      cursor: default;
+    }
+
+    .finder-item:last-child { border-bottom: none; }
+
+    .finder-item:hover {
+      background: #1a1a8a;
+      color: white;
+    }
+
+    .finder-item:hover .fi-sub { color: rgba(255,255,255,0.7); }
+
+    .fi-icon { font-size: 20px; flex-shrink: 0; padding-top: 2px; }
+    .fi-main { font-family: 'Special Elite', serif; font-size: 14px; font-weight: bold; }
+    .fi-sub { font-family: 'VT323', monospace; font-size: 13px; color: #666; margin-top: 2px; }
+
+    /* Text content */
+    .window-body p {
+      font-family: 'Special Elite', serif;
+      font-size: 15px;
+      color: #1a1008;
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+
+    .window-body strong { color: #4a1a00; }
+    .window-body em { color: #604020; }
+
+    /* Contact form */
+    .retro-form input,
+    .retro-form textarea {
+      display: block;
+      width: 100%;
+      padding: 8px 10px;
+      font-family: 'VT323', monospace;
+      font-size: 15px;
+      background: #fff;
+      border: 2px solid #909080;
+      border-radius: 0;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    .retro-form input:focus,
+    .retro-form textarea:focus {
+      border-color: #1a1a8a;
+      box-shadow: 0 0 0 2px rgba(26,26,138,0.15);
+    }
+
+    .retro-form textarea {
+      height: 90px;
+      resize: none;
+    }
+
+    .retro-form label {
+      font-family: 'VT323', monospace;
+      font-size: 13px;
+      color: #444;
+      display: block;
+      margin-bottom: 3px;
+      letter-spacing: 1px;
+    }
+
+    .retro-btn {
+      background: linear-gradient(to bottom, #d0c8a8, #b0a880);
+      border: 2px solid #808060;
+      border-radius: 4px;
+      padding: 8px 22px;
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #606040;
+      color: #1a1008;
+      margin-top: 4px;
+    }
+
+    .retro-btn:active {
+      box-shadow: none;
+      transform: translate(2px, 2px);
+    }
+
+    .email-display {
+      font-family: 'VT323', monospace;
+      font-size: 16px;
+      color: #1a1a8a;
+      background: #e8f0ff;
+      border: 1px solid #8080c0;
+      padding: 6px 12px;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    /* Nav hint */
+    .hint {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.35);
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      letter-spacing: 3px;
+      pointer-events: none;
+      white-space: nowrap;
+      animation: hintFade 5s ease 2s forwards;
+      opacity: 0;
+    }
+
+    @keyframes hintFade {
+      0%   { opacity: 0; }
+      15%  { opacity: 1; }
+      70%  { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+
+    /* Name in corner */
+    .name-plate {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      font-family: 'VT323', monospace;
+      font-size: 11px;
+      color: rgba(200,160,64,0.5);
+      letter-spacing: 3px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scene">
+
+  <!-- Wall -->
+  <div class="wall">
+    <div class="wall-art">
+      <div class="wall-art-line"></div>
+      <div class="wall-art-text">FORENSIC<br>CYBERPSYCHOLOGY<br>LAB</div>
+      <div class="wall-art-line"></div>
+    </div>
+  </div>
+
+  <!-- Desk -->
+  <div class="desk"></div>
+
+  <!-- ═══ MAC COMPUTER ═══ -->
+  <div class="mac-wrap" onclick="open_('services')">
+    <div class="glow-ring"></div>
+    <div class="mac-body">
+      <div class="mac-bezel">
+        <div class="mac-screen">
+          <div class="screen-text" id="screenText"></div>
+        </div>
+      </div>
+      <div class="mac-logo-strip">
+        <div class="mac-drive-slot"></div>
+        <div class="mac-model-text">Macintosh</div>
+      </div>
+    </div>
+    <div class="mac-stand"></div>
+    <div class="mac-base"></div>
+    <div class="item-label">► SERVICES</div>
+  </div>
+
+  <!-- ═══ KEYBOARD ═══ -->
+  <div class="keyboard-wrap" onclick="open_('about')">
+    <div class="keyboard-body">
+      <div class="key-row">
+        <div class="key"></div><div class="key"></div><div class="key"></div>
+        <div class="key"></div><div class="key"></div><div class="key"></div>
+        <div class="key"></div><div class="key"></div><div class="key"></div>
+        <div class="key"></div><div class="key"></div><div class="key"></div>
+        <div class="key"></div>
+      </div>
+      <div class="key-row">
+        <div class="key wider"></div><div class="key"></div><div class="key"></div>
+        <div class="key"></div><div class="key"></div><div class="key"></div>
+        <div class="key"></div><div class="key"></div><div class="key"></div>
+        <div class="key wide"></div>
+      </div>
+      <div class="key-row">
+        <div class="key wide"></div><div class="key space"></div>
+        <div class="key wide"></div>
+      </div>
+    </div>
+    <div class="item-label" style="bottom:-28px;">► ABOUT</div>
+  </div>
+
+  <!-- ═══ MOUSE ═══ -->
+  <div class="mouse-wrap" onclick="open_('home')">
+    <div class="mouse-cord"></div>
+    <div class="mouse-body">
+      <div class="mouse-button"></div>
+      <div class="mouse-btn-line"></div>
+    </div>
+    <div class="item-label" style="bottom:-26px;">► HOME</div>
+  </div>
+
+  <!-- ═══ ENVELOPE ═══ -->
+  <div class="envelope-wrap" onclick="open_('contact')">
+    <div class="envelope-body">
+      <div class="env-flap"></div>
+      <div class="env-bottom-left"></div>
+      <div class="env-bottom-right"></div>
+      <div class="env-stamp">★</div>
+    </div>
+    <div class="item-label" style="bottom:-26px;">► CONTACT</div>
+  </div>
+
+  <!-- ═══ FLOPPY DISK ═══ -->
+  <div class="floppy-wrap" onclick="open_('research')">
+    <div class="floppy-body">
+      <div class="floppy-label-area">CASE<br>FILES.dsk</div>
+      <div class="floppy-notch"></div>
+      <div class="floppy-shutter"></div>
+    </div>
+    <div class="item-label" style="bottom:-26px;">► RESEARCH</div>
+  </div>
+
+  <!-- ═══ NOTEBOOK ═══ -->
+  <div class="notebook-wrap" onclick="open_('cv')">
+    <div class="notebook-body">
+      <div class="notebook-cover"></div>
+      <div class="notebook-spine"></div>
+      <div class="notebook-pages"></div>
+      <div class="notebook-title">CURR.<br>VITAE</div>
+    </div>
+    <div class="item-label" style="bottom:-26px; left:10px;">► C.V.</div>
+  </div>
+
+  <!-- ═══ COFFEE MUG ═══ -->
+  <div class="mug-wrap" onclick="open_('easter')">
+    <div class="mug-steam">
+      <div class="steam-line"></div>
+      <div class="steam-line"></div>
+      <div class="steam-line"></div>
+    </div>
+    <div class="mug-body">
+      <div class="mug-handle"></div>
+      <div class="mug-text">☕</div>
+    </div>
+    <div class="mug-base"></div>
+    <div class="item-label" style="bottom:-26px;">► ???</div>
+  </div>
+
+</div>
+
+<!-- ═══ HINT ═══ -->
+<div class="hint">CLICK ANYTHING ON THE DESK TO EXPLORE</div>
+<div class="name-plate">ERIN STEPHENS<br>FORENSIC RESEARCHER</div>
+
+<!-- ═══════════════════ OVERLAYS ═══════════════════ -->
+
+<!-- SERVICES -->
+<div class="overlay" id="ov-services">
+  <div class="mac-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('services')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">📁 Services — Erin Stephens</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <div class="finder-list">
+        <div class="finder-item">
+          <div class="fi-icon">🔍</div>
+          <div>
+            <div class="fi-main">Forensic Research</div>
+            <div class="fi-sub">Behavioral & financial pattern analysis — crypto, dark web, online offending</div>
+          </div>
+        </div>
+        <div class="finder-item">
+          <div class="fi-icon">🌐</div>
+          <div>
+            <div class="fi-main">OSINT & Cryptocurrency Forensics</div>
+            <div class="fi-sub">Tracing digital footprints across open and closed-source data</div>
+          </div>
+        </div>
+        <div class="finder-item">
+          <div class="fi-icon">🎓</div>
+          <div>
+            <div class="fi-main">Training & Education</div>
+            <div class="fi-sub">Law enforcement support — ICAC investigation & prosecution</div>
+          </div>
+        </div>
+        <div class="finder-item">
+          <div class="fi-icon">🧠</div>
+          <div>
+            <div class="fi-main">Cyberpsychology Consulting</div>
+            <div class="fi-sub">The behavioral science of how people hide — and how they're found</div>
+          </div>
+        </div>
+        <div class="finder-item">
+          <div class="fi-icon">📊</div>
+          <div>
+            <div class="fi-main">Expert Analysis & Reports</div>
+            <div class="fi-sub">Court-ready documentation, case support & expert testimony</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="overlay" id="ov-about">
+  <div class="mac-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('about')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">👤 About — Erin Stephens</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <p>I'm <strong>Erin Stephens</strong> — researcher, forensic analyst, and doctoral candidate in forensic cyberpsychology.</p>
+      <p>My work lives at the crossroads of <em>how people behave, how they hide, and how they get found.</em></p>
+      <p>I bring investigative rigor, pattern recognition, and deep domain expertise to cybersecurity, digital forensics, and the behavioral study of online offending.</p>
+      <p>Docka Research exists because this work matters — and because the right tools, in the right hands, change outcomes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="overlay" id="ov-contact">
+  <div class="mac-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('contact')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">📬 Contact — Send a Message</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <div class="email-display">erin@dockaresearch.com</div>
+      <form class="retro-form" onsubmit="return false;">
+        <label>NAME:</label>
+        <input type="text" placeholder="Your name" />
+        <label>EMAIL:</label>
+        <input type="email" placeholder="your@email.com" />
+        <label>MESSAGE:</label>
+        <textarea placeholder="What's on your mind?"></textarea>
+        <button class="retro-btn" type="submit">[ SEND MESSAGE ]</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- RESEARCH -->
+<div class="overlay" id="ov-research">
+  <div class="mac-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('research')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">💾 Research & Case Files</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <p style="font-family:'VT323',monospace; font-size:14px; color:#666; letter-spacing:2px;">[READING DISK... LOADING CASE FILES...]</p>
+      <p>Current research focuses on <strong>behavioral fingerprinting</strong> of online offenders operating in cryptocurrency ecosystems and dark web markets.</p>
+      <p>Bridging forensic psychology, OSINT tradecraft, and blockchain analysis to identify patterns invisible to conventional investigation.</p>
+      <p><em>Case studies and publications — forthcoming.</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="overlay" id="ov-home">
+  <div class="mac-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('home')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">🏠 Welcome</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <p><strong>Forensic research at the intersection of human behavior and emerging technology.</strong></p>
+      <p>Explore the desk:</p>
+      <p>
+        🖥️ <strong>Computer</strong> → Services<br>
+        ⌨️ <strong>Keyboard</strong> → About<br>
+        🖱️ <strong>Mouse</strong> → You're here<br>
+        📬 <strong>Envelope</strong> → Contact<br>
+        💾 <strong>Floppy disk</strong> → Research<br>
+        📓 <strong>Red notebook</strong> → C.V.<br>
+        ☕ <strong>Coffee mug</strong> → Find out
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- CV -->
+<div class="overlay" id="ov-cv">
+  <div class="mac-window">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('cv')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">📓 Curriculum Vitae</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <p style="font-family:'VT323',monospace; color:#888; font-size:13px; letter-spacing:2px;">[CLASSIFIED — LEVEL 4 CLEARANCE REQUIRED]</p>
+      <p>Doctoral candidate, <strong>forensic cyberpsychology</strong>.</p>
+      <p>Forensic analyst · OSINT specialist · Cryptocurrency investigator · Educator for law enforcement agencies.</p>
+      <p><em>Full C.V. available upon request — click the envelope on the desk.</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- EASTER EGG -->
+<div class="overlay" id="ov-easter">
+  <div class="mac-window" style="max-width:380px;">
+    <div class="window-titlebar">
+      <div class="window-dots">
+        <div class="dot close" onclick="close_('easter')"></div>
+        <div class="dot min"></div>
+        <div class="dot max"></div>
+      </div>
+      <div class="window-title">☕ Dark Roast</div>
+      <div style="width:52px;"></div>
+    </div>
+    <div class="window-body">
+      <p style="text-align:center; font-size:40px; margin-bottom:8px;">☕</p>
+      <p style="text-align:center;"><strong>Fuel source: identified.</strong></p>
+      <p style="text-align:center; font-family:'VT323',monospace; font-size:14px; color:#666;">
+        All forensic breakthroughs<br>powered by strong coffee<br>and pattern recognition.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Typewriter on Mac screen ──
+  const screen = document.getElementById('screenText');
+  const lines = [
+    'SYSTEM BOOT...',
+    'LOADING...',
+    '',
+    'Hello.',
+    '',
+    "I'm Erin Stephens.",
+    'Forensic researcher.',
+    'I find what hides.',
+    '',
+    '> click to explore_'
+  ];
+
+  let li = 0, ci = 0, html = '';
+
+  function type() {
+    if (li >= lines.length) {
+      screen.innerHTML = html.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
+      return;
+    }
+    const line = lines[li];
+    if (ci < line.length) {
+      html += line[ci++];
+      screen.innerHTML = html.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
+      setTimeout(type, ci === 1 ? 500 : (line === 'SYSTEM BOOT...' || line === 'LOADING...' ? 60 : 55));
+    } else {
+      html += '\n';
+      li++; ci = 0;
+      screen.innerHTML = html.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
+      setTimeout(type, li >= lines.length ? 0 : (lines[li] === '' ? 120 : 300));
+    }
+  }
+
+  setTimeout(type, 800);
+
+  // ── Overlays ──
+  function open_(id) {
+    document.getElementById('ov-' + id).classList.add('active');
+  }
+
+  function close_(id) {
+    document.getElementById('ov-' + id).classList.remove('active');
+  }
+
+  document.querySelectorAll('.overlay').forEach(ov => {
+    ov.addEventListener('click', e => {
+      if (e.target === ov) ov.classList.remove('active');
+    });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')
+      document.querySelectorAll('.overlay.active').forEach(o => o.classList.remove('active'));
+  });
+</script>
+</body>
+</html>
