@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            --wall-color: #EDE4D0;
+            --wall-color: #C4A882;
             --desk-color: #B87830;
             --mac-body: #C9C0A8;
             --mac-screen: #0a0a0a;
@@ -21,9 +21,9 @@
         }
 
         .dark-mode {
-            --wall-color: #1a1008;
+            --wall-color: #2C1A0E;
             --desk-color: #2a1408;
-            --lamp-glow: radial-gradient(circle at 200px 200px, rgba(255, 230, 150, 0.4) 0%, transparent 70%);
+            --lamp-glow: radial-gradient(ellipse 70% 80% at 12% 0%, rgba(255,210,80,0.55) 0%, rgba(255,190,50,0.25) 35%, rgba(255,170,30,0.08) 60%, transparent 75%);
             --text-color: #eee;
             --menu-bg: #333;
         }
@@ -199,10 +199,13 @@
 
         /* Desk Items */
         .desk-item { position: absolute; transition: transform 0.2s; }
-        .desk-item:hover { transform: translateY(-5px); }
+        .desk-item:hover { transform: translateY(-3px); filter: brightness(1.05); }
+        .desk-item { cursor: pointer; }
 
-        #keyboard { bottom: 5%; width: 400px; height: 60px; background: var(--mac-body); border-radius: 5px; box-shadow: 5px 5px 10px rgba(0,0,0,0.2); left: calc(50% - 200px); z-index: 11; }
-        #mouse { bottom: 5%; right: 20%; width: 60px; height: 80px; background: var(--mac-body); border-radius: 10px; box-shadow: 3px 3px 6px rgba(0,0,0,0.2); z-index: 11; }
+        #keyboard { bottom: 3%; width: 380px; left: calc(50% - 190px); z-index: 11; background: none; height: auto; }
+        #keyboard img { width: 100%; height: auto; display: block; filter: drop-shadow(4px 6px 12px rgba(0,0,0,0.35)); }
+        #mouse { bottom: 4%; right: 18%; width: 90px; z-index: 11; background: none; height: auto; }
+        #mouse img { width: 100%; height: auto; display: block; filter: drop-shadow(3px 5px 8px rgba(0,0,0,0.3)); }
         #red-notebook { bottom: 10%; left: 20%; width: 120px; height: 160px; background: #a02020; border-radius: 2px 10px 10px 2px; box-shadow: 4px 4px 8px rgba(0,0,0,0.3); z-index: 11; }
         #envelope { bottom: 15%; right: 5%; width: 150px; height: 100px; background: #fdfdfd; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); transform: rotate(5deg); z-index: 11; }
         #floppy { bottom: 25%; right: 15%; width: 80px; height: 82px; background: #333; border-radius: 4px; z-index: 11; box-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
@@ -210,34 +213,6 @@
         #coffee-mug::after { content: ''; position: absolute; right: -20px; top: 15px; width: 30px; height: 40px; border: 8px solid #fff; border-radius: 50%; }
         #lamp { bottom: 40%; left: 2%; width: 120px; height: 200px; z-index: 12; }
         #printer { bottom: 20%; right: 2%; width: 180px; height: 100px; background: #e0e0e0; border-radius: 5px; z-index: 11; box-shadow: 4px 4px 10px rgba(0,0,0,0.2); }
-
-        /* Interaction Circle */
-        .hover-circle {
-            position: absolute;
-            pointer-events: none;
-            width: 120%;
-            height: 120%;
-            top: -10%;
-            left: -10%;
-            z-index: 20;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .desk-item:hover .hover-circle { opacity: 1; }
-        .circle-svg {
-            width: 100%;
-            height: 100%;
-            fill: none;
-            stroke: var(--circle-red);
-            stroke-width: 3;
-            stroke-linecap: round;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-        }
-        .desk-item:hover .circle-svg {
-            animation: drawCircle 0.4s forwards ease-out;
-        }
-        @keyframes drawCircle { to { stroke-dashoffset: 0; } }
 
         /* Overlays */
         #overlay-container {
@@ -309,6 +284,45 @@
         }
         .printing .receipt { transform: scaleY(1); }
 
+        .clipping {
+            background: #f5f0e0;
+            padding: 8px 10px;
+            font-family: Georgia, serif;
+            font-size: 9px;
+            line-height: 1.4;
+            color: #222;
+            border: 1px solid #d0c8b0;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transform: rotate(-1.5deg);
+            position: absolute;
+            width: 180px;
+            top: 30px;
+            left: 10px;
+        }
+        .clipping-headline {
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 1px solid #888;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
+            line-height: 1.3;
+        }
+        .clipping-date { font-size: 8px; color: #666; margin-bottom: 4px; }
+        .pin-gold {
+            width: 14px; height: 14px;
+            background: radial-gradient(circle at 35% 35%, #FFE566, #B8860B);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        }
+        .string-line {
+            position: absolute;
+            background: #c0392b;
+            height: 1px;
+            transform-origin: left center;
+            opacity: 0.7;
+        }
+
         @media (max-width: 1024px) { #viewport { transform: scale(0.85); transform-origin: bottom center; } }
         @media (max-width: 768px) { #viewport { transform: scale(0.65); transform-origin: bottom center; } }
     </style>
@@ -323,26 +337,41 @@
             <div class="dropdown-item" onclick="showOverlay('services')">Docka Research...</div>
         </div>
     </div>
-    <div class="menu-item">File</div>
-    <div class="menu-item">Edit</div>
-    <div class="menu-item">View</div>
-    <div class="menu-item">Special</div>
+    <div class="menu-item" onclick="showOverlay('opencase')">File</div>
+    <div class="menu-item" onclick="showOverlay('redact')">Edit</div>
+    <div class="menu-item" onclick="showOverlay('enhance')">View</div>
+    <div class="menu-item" onclick="toggleLamp()">Special</div>
 </div>
 
 <div id="viewport">
-    <div id="evidence-board">
-        <div class="pin" style="top:5px; left:5px;"></div>
-        <div class="pin" style="top:5px; right:5px;"></div>
-        <div class="index-card desk-item" onclick="showOverlay('research')">
-            <strong>CASE FILES</strong>
-            <p style="font-size:10px; margin-top:5px;">Behavioral Analysis Subsets</p>
-            <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    <div id="evidence-board" class="desk-item" onclick="showOverlay('research')">
+        <!-- Gold pushpins -->
+        <div class="pin-gold" style="top:-6px; left:-6px;"></div>
+        <div class="pin-gold" style="top:-6px; right:-6px;"></div>
+        <div class="pin-gold" style="bottom:-6px; left:calc(50% - 7px);"></div>
+
+        <!-- Red string connecting items -->
+        <div class="string-line" style="top:80px; left:30px; width:120px; transform:rotate(12deg);"></div>
+        <div class="string-line" style="top:95px; left:80px; width:100px; transform:rotate(-8deg);"></div>
+
+        <!-- Epstein newspaper clipping -->
+        <div class="clipping" style="top:15px; left:8px; transform:rotate(-2deg);">
+            <div class="clipping-date">THE NEW YORK TIMES &bull; JULY 8, 2019</div>
+            <div class="clipping-headline">Jeffrey Epstein, Financier Long Accused of Molesting Minors, Is Charged</div>
+            <p>Federal prosecutors in Manhattan charged the financier Jeffrey Epstein with sex trafficking of minors on Monday, accusing him of paying dozens of underage girls for massages and then molesting them...</p>
         </div>
-        <div style="background:#eee; height:100px; width:150px; margin-top:40px; transform:rotate(2deg); border:1px solid #ccc; padding:5px; font-size:8px;">
-            <strong style="font-size:10px;">DAILY NEWS</strong><br>New patterns in cyber-deception detected...
+
+        <!-- Index card with hand annotation -->
+        <div style="background:#fffef0; width:150px; padding:10px; position:absolute; top:175px; left:20px; transform:rotate(2.5deg); box-shadow:2px 3px 5px rgba(0,0,0,0.2); border:1px solid #d0c8a0; font-size:10px; font-family:Georgia,serif;">
+            <div style="font-weight:bold; font-size:11px; margin-bottom:5px;">NETWORK MAP</div>
+            <div style="color:#c0392b; font-style:italic;">→ Maxwell connection?</div>
+            <div style="color:#c0392b; font-style:italic;">→ Flight logs — Lolita Exp.</div>
+            <div style="margin-top:8px; color:#333;">Verify island records.</div>
         </div>
-        <div style="background:#fff799; padding:5px; width:100px; position:absolute; bottom:20px; right:10px; transform:rotate(-5deg); box-shadow:2px 2px 2px rgba(0,0,0,0.1); font-size:12px;">
-            OPEN CASES: 3
+
+        <!-- Sticky note -->
+        <div style="background:#fff799; padding:6px 8px; width:110px; position:absolute; bottom:12px; right:8px; transform:rotate(-4deg); box-shadow:2px 2px 3px rgba(0,0,0,0.15); font-size:11px; font-family:'Special Elite', cursive;">
+            OPEN CASES: 3<br><span style="font-size:9px; color:#555;">— see deep file</span>
         </div>
     </div>
 
@@ -353,34 +382,29 @@
                 <span class="phosphor-text" style="font-size: 16px; letter-spacing:2px;">READY_</span>
             </div>
         </div>
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="keyboard" class="desk-item" onclick="showOverlay('about')">
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+        <img src="desk-prototype/assets/keyboard.jpg" alt="Vintage Apple M0110 Keyboard" />
     </div>
     
     <div id="mouse" class="desk-item" onclick="showOverlay('home')">
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+        <img src="desk-prototype/assets/mouse.jpg" alt="Vintage Apple M0100 Mouse" />
     </div>
 
     <div id="red-notebook" class="desk-item" onclick="showOverlay('cv')">
         <div style="color:white; padding:15px; font-size:12px;">CURRICULUM VITAE</div>
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="envelope" class="desk-item" onclick="showOverlay('contact')">
         <div style="padding:10px; font-size:8px;">erin@dockaresearch.com</div>
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="floppy" class="desk-item" onclick="startGame('snake')">
         <div style="width:100%; height:20px; background:#fff; margin-top:5px; font-size:10px; text-align:center;">SNAKE.EXE</div>
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="coffee-mug" class="desk-item" onclick="showOverlay('easteregg')">
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="lamp" class="desk-item" onclick="toggleLamp()">
@@ -388,14 +412,12 @@
             <rect x="45" y="100" width="10" height="100" fill="#444" />
             <path d="M20 100 L80 100 L90 50 L10 50 Z" fill="#666" />
         </svg>
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="printer" class="desk-item" onclick="printCV()">
         <div class="receipt">
             ERIN STEPHENS<br>CV SUMMARY<br>----------<br>* Forensic Researcher<br>* Cyberpsychology<br>* OSINT Expert<br>----------
         </div>
-        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
     </div>
 
     <div id="desk-surface">
@@ -513,6 +535,66 @@
 
     /* Overlays */
     const contentMap = {
+        opencase: { title: "File — Open Case...", body: `
+            <div style="font-family:Georgia,serif; padding:10px;">
+                <div style="font-size:10px; letter-spacing:3px; color:#888; margin-bottom:10px;">CLASSIFIED // CASE #4891-C</div>
+                <h2 style="font-size:18px; margin-bottom:15px;">SUBJECT: J. EPSTEIN NETWORK</h2>
+                <p style="background:#000; color:#000; padding:4px 8px; margin:8px 0; user-select:none;">██████████████████████████████ [REDACTED]</p>
+                <p style="margin:8px 0;">Behavioral pattern analysis indicates systemic institutional protection. Primary vectors: financial instruments, offshore accounts, and social leverage across three continents.</p>
+                <p style="background:#000; color:#000; padding:4px 8px; margin:8px 0; user-select:none;">Contact list: ██ individuals, ██ confirmed, ██ ██████</p>
+                <p style="margin-top:15px; font-style:italic; font-size:12px; color:#888;">This file is protected under federal statute 18 U.S.C. § 2255. Unauthorized access is a federal offense.</p>
+                <p style="color:#c0392b; font-weight:bold; margin-top:10px; font-size:13px;">STATUS: INVESTIGATION ONGOING</p>
+            </div>` },
+        redact: { title: "Edit — Redact", body: `
+            <div style="text-align:center; padding:30px; font-family:Georgia,serif;">
+                <div style="font-size:40px; margin-bottom:20px;">🖊️</div>
+                <h2>REDACTION TOOL</h2>
+                <p style="margin:15px 0; font-size:13px;">Select any text on this page and it will be permanently redacted from the record.</p>
+                <div style="background:#111; color:#111; padding:10px; margin:20px 0; font-size:14px; user-select:none; border:1px solid #333;">
+                    ██ ████████ ███ ██████ ████ ██ ████████ ████████ ███ ██████████ █████ ██ ██████ ████ ██████ ██████████.
+                </div>
+                <p style="font-size:11px; color:#888; font-style:italic;">"What is buried stays buried." — File Protocol 7</p>
+            </div>` },
+        enhance: { title: "View — Enhance", body: `
+            <div style="text-align:center; padding:20px; font-family:monospace; background:#000; color:#00ff41;">
+                <div style="font-size:13px; margin-bottom:15px; letter-spacing:2px;">ENHANCEMENT PROTOCOL — ACTIVE</div>
+                <canvas id="enhance-canvas" width="420" height="240" style="border:1px solid #00ff41; display:block; margin:0 auto;"></canvas>
+                <div id="enhance-log" style="text-align:left; font-size:10px; margin-top:10px; height:80px; overflow:hidden;"></div>
+            </div>
+            <script>
+            (function(){
+                const c = document.getElementById('enhance-canvas');
+                const ctx = c.getContext('2d');
+                const log = document.getElementById('enhance-log');
+                const msgs = ['SCANNING PIXEL ARRAY...','ISOLATING FREQUENCY BANDS...','INTERPOLATING MISSING DATA...','DECOMPRESSING ARTIFACTS...','CROSS-REFERENCING DATABASE...','MATCH FOUND — CONFIDENCE: 94.7%','ENHANCING...','ENHANCE COMPLETE'];
+                let i = 0;
+                let zoom = 1;
+                function draw(){
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0,0,420,240);
+                    ctx.save();
+                    ctx.translate(210,120);
+                    ctx.scale(zoom,zoom);
+                    ctx.translate(-210,-120);
+                    ctx.strokeStyle = '#00ff41';
+                    ctx.lineWidth = 0.5/zoom;
+                    for(let x=0;x<42;x++) for(let y=0;y<24;y++){
+                        if(Math.random()>0.7){ ctx.fillStyle='rgba(0,255,65,'+(Math.random()*0.5+0.1)+')'; ctx.fillRect((x*10),y*10,9,9); }
+                    }
+                    ctx.strokeRect(180,100,60,40);
+                    ctx.restore();
+                    ctx.fillStyle='#00ff41'; ctx.font='10px monospace';
+                    ctx.fillText('ZOOM: '+zoom.toFixed(1)+'x', 10, 20);
+                }
+                function tick(){
+                    if(zoom < 12) zoom *= 1.05;
+                    draw();
+                    if(i < msgs.length){ log.innerHTML += msgs[i++]+'<br>'; log.scrollTop=9999; }
+                    if(zoom < 12) setTimeout(tick, 120);
+                }
+                tick();
+            })();
+            <\/script>` },
         home: { title: "Welcome", body: "<h1>Docka Research</h1><p>Forensic Researcher Desk. Everything here is interactive. Click around to explore my work, research, and tools.</p>" },
         services: { title: "Services", body: "<ul><li>Forensic Research</li><li>OSINT & Cryptocurrency Forensics</li><li>Training & Education</li><li>Cyberpsychology Consulting</li><li>Expert Analysis & Reports</li></ul>" },
         about: { title: "About Erin", body: "Erin Stephens is a forensic researcher and doctoral candidate in forensic cyberpsychology. She works at the crossroads of how people behave, how they hide, and how they get found." },
