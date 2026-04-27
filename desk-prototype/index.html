@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docka Research | Forensic Researcher Desk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wall-color: #EDE4D0;
+            --desk-color: #B87830;
+            --mac-body: #C9C0A8;
+            --mac-screen: #0a0a0a;
+            --phosphor: #c8e8a0;
+            --shadow: rgba(0,0,0,0.2);
+            --lamp-glow: transparent;
+            --text-color: #000;
+            --menu-bg: #fff;
+            --circle-red: #C02020;
+            --transition-speed: 0.5s;
+        }
+
+        .dark-mode {
+            --wall-color: #1a1008;
+            --desk-color: #2a1408;
+            --lamp-glow: radial-gradient(circle at 200px 200px, rgba(255, 230, 150, 0.4) 0%, transparent 70%);
+            --text-color: #eee;
+            --menu-bg: #333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+        
+        body {
+            background-color: var(--wall-color);
+            font-family: 'Special Elite', cursive;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            transition: background-color var(--transition-speed);
+        }
+
+        /* System 6 Menu Bar */
+        #menu-bar {
+            height: 22px;
+            background: #fff;
+            border-bottom: 1px solid #000;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-size: 12px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .menu-item { padding: 0 8px; position: relative; }
+        .menu-item:hover { background: #000; color: #fff; }
+        .apple-logo { font-size: 14px; }
+        
+        #menu-bar .dropdown {
+            display: none;
+            position: absolute;
+            top: 22px;
+            left: 0;
+            background: #fff;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            min-width: 150px;
+            z-index: 1001;
+        }
+        .menu-item:hover .dropdown { display: block; }
+        .dropdown-item { padding: 4px 12px; color: #000; }
+        .dropdown-item:hover { background: #000; color: #fff; }
+
+        /* Desk Scene */
+        #viewport {
+            width: 100%;
+            height: calc(100% - 22px);
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        #desk-surface {
+            width: 100%;
+            height: 35%;
+            background-color: #9A6535;
+            background-image:
+                repeating-linear-gradient(
+                    92deg,
+                    transparent,
+                    transparent 18px,
+                    rgba(255,255,255,0.025) 18px,
+                    rgba(255,255,255,0.025) 19px
+                ),
+                repeating-linear-gradient(
+                    180deg,
+                    rgba(0,0,0,0.04) 0px,
+                    rgba(0,0,0,0.04) 1px,
+                    transparent 1px,
+                    transparent 6px
+                ),
+                linear-gradient(
+                    180deg,
+                    #B07840 0%,
+                    #9A6535 30%,
+                    #A66E38 65%,
+                    #8B5A2C 100%
+                );
+            border-top: 5px solid #6B3E18;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+            transition: background-color var(--transition-speed);
+        }
+
+        #lamp-light {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--lamp-glow);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Evidence Board */
+        #evidence-board {
+            position: absolute;
+            left: 5%;
+            top: 10%;
+            width: 250px;
+            height: 350px;
+            background-color: #C4914F;
+            background-image:
+                radial-gradient(ellipse at 15% 20%, rgba(160,100,40,0.5) 0%, transparent 45%),
+                radial-gradient(ellipse at 85% 75%, rgba(140,80,30,0.4) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(200,150,80,0.2) 0%, transparent 60%),
+                repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 4px);
+            border: 10px solid #6B3E1C;
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.2), inset 0 0 30px rgba(140,90,30,0.3), 6px 6px 20px rgba(0,0,0,0.4);
+            padding: 15px;
+            z-index: 1;
+        }
+        .pin {
+            width: 8px; height: 8px; background: gold; border-radius: 50%;
+            position: absolute; box-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .index-card {
+            background: #fff; width: 120px; height: 80px; padding: 10px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transform: rotate(-3deg); margin-top: 20px;
+            font-size: 14px; color: #333; text-align: center;
+            border-top: 2px solid #add8e6;
+        }
+
+        /* Real Mac Photo + Screen Overlay */
+        #mac-container {
+            position: absolute;
+            bottom: 18%;
+            width: 310px;
+            z-index: 10;
+        }
+        #mac-photo {
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(6px 12px 24px rgba(0,0,0,0.5));
+        }
+        #mac-screen-overlay {
+            position: absolute;
+            /* Calibrated to real Mac 128k photo screen area */
+            left: 31%;
+            top: 14.5%;
+            width: 52%;
+            height: 37%;
+            background: #0d0d0d;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.9), inset 0 0 8px rgba(0,0,0,0.6);
+        }
+        /* Phosphor scanlines on screen */
+        #mac-screen-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.08) 2px,
+                rgba(0,0,0,0.08) 4px
+            );
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Desk Items */
+        .desk-item { position: absolute; transition: transform 0.2s; }
+        .desk-item:hover { transform: translateY(-5px); }
+
+        #keyboard { bottom: 5%; width: 400px; height: 60px; background: var(--mac-body); border-radius: 5px; box-shadow: 5px 5px 10px rgba(0,0,0,0.2); left: calc(50% - 200px); z-index: 11; }
+        #mouse { bottom: 5%; right: 20%; width: 60px; height: 80px; background: var(--mac-body); border-radius: 10px; box-shadow: 3px 3px 6px rgba(0,0,0,0.2); z-index: 11; }
+        #red-notebook { bottom: 10%; left: 20%; width: 120px; height: 160px; background: #a02020; border-radius: 2px 10px 10px 2px; box-shadow: 4px 4px 8px rgba(0,0,0,0.3); z-index: 11; }
+        #envelope { bottom: 15%; right: 5%; width: 150px; height: 100px; background: #fdfdfd; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); transform: rotate(5deg); z-index: 11; }
+        #floppy { bottom: 25%; right: 15%; width: 80px; height: 82px; background: #333; border-radius: 4px; z-index: 11; box-shadow: 2px 2px 4px rgba(0,0,0,0.4); }
+        #coffee-mug { bottom: 30%; left: 10%; width: 70px; height: 80px; background: #fff; border-radius: 5px 5px 30px 30px; box-shadow: 3px 3px 6px rgba(0,0,0,0.2); z-index: 11; }
+        #coffee-mug::after { content: ''; position: absolute; right: -20px; top: 15px; width: 30px; height: 40px; border: 8px solid #fff; border-radius: 50%; }
+        #lamp { bottom: 40%; left: 2%; width: 120px; height: 200px; z-index: 12; }
+        #printer { bottom: 20%; right: 2%; width: 180px; height: 100px; background: #e0e0e0; border-radius: 5px; z-index: 11; box-shadow: 4px 4px 10px rgba(0,0,0,0.2); }
+
+        /* Interaction Circle */
+        .hover-circle {
+            position: absolute;
+            pointer-events: none;
+            width: 120%;
+            height: 120%;
+            top: -10%;
+            left: -10%;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .desk-item:hover .hover-circle { opacity: 1; }
+        .circle-svg {
+            width: 100%;
+            height: 100%;
+            fill: none;
+            stroke: var(--circle-red);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        .desk-item:hover .circle-svg {
+            animation: drawCircle 0.4s forwards ease-out;
+        }
+        @keyframes drawCircle { to { stroke-dashoffset: 0; } }
+
+        /* Overlays */
+        #overlay-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .sys6-window {
+            background: #fff;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000;
+            width: 500px;
+            max-width: 90vw;
+            position: relative;
+        }
+        .sys6-titlebar {
+            height: 20px;
+            background: repeating-linear-gradient(180deg, #000 0px, #000 1px, #fff 1px, #fff 2px);
+            border-bottom: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sys6-title {
+            background: #fff;
+            padding: 0 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .sys6-close {
+            position: absolute;
+            left: 4px; top: 4px;
+            width: 11px; height: 11px;
+            background: #fff;
+            border: 1px solid #000;
+        }
+        .sys6-close:active { background: #000; }
+        .sys6-content { padding: 20px; color: #000; line-height: 1.4; overflow-y: auto; max-height: 70vh; }
+        
+        /* Games Styles */
+        #game-canvas { width: 100%; background: #0a0a0a; display: block; }
+        .phosphor-text { font-family: 'VT323', monospace; color: var(--phosphor); text-shadow: 0 0 5px var(--phosphor); }
+
+        /* Screensaver */
+        #screensaver {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 5000;
+            display: none;
+            color: #fff;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .toaster { position: absolute; font-size: 40px; pointer-events: none; }
+        
+        /* UI Utilities */
+        #mute-btn { position: fixed; bottom: 10px; right: 10px; z-index: 3000; background: #fff; border: 1px solid #000; padding: 5px; }
+
+        /* Receipts */
+        .receipt {
+            background: #fff; width: 100px; padding: 10px; border-radius: 0 0 5px 5px;
+            position: absolute; top: 100%; left: 40px; transform: scaleY(0); transform-origin: top;
+            transition: transform 1s; z-index: 10; font-size: 8px; border: 1px solid #ccc;
+        }
+        .printing .receipt { transform: scaleY(1); }
+
+        @media (max-width: 1024px) { #viewport { transform: scale(0.85); transform-origin: bottom center; } }
+        @media (max-width: 768px) { #viewport { transform: scale(0.65); transform-origin: bottom center; } }
+    </style>
+</head>
+<body>
+
+<div id="menu-bar">
+    <div class="menu-item apple-logo">
+        🍎
+        <div class="dropdown">
+            <div class="dropdown-item" onclick="showOverlay('about')">About This Mac...</div>
+            <div class="dropdown-item" onclick="showOverlay('services')">Docka Research...</div>
+        </div>
+    </div>
+    <div class="menu-item">File</div>
+    <div class="menu-item">Edit</div>
+    <div class="menu-item">View</div>
+    <div class="menu-item">Special</div>
+</div>
+
+<div id="viewport">
+    <div id="evidence-board">
+        <div class="pin" style="top:5px; left:5px;"></div>
+        <div class="pin" style="top:5px; right:5px;"></div>
+        <div class="index-card desk-item" onclick="showOverlay('research')">
+            <strong>CASE FILES</strong>
+            <p style="font-size:10px; margin-top:5px;">Behavioral Analysis Subsets</p>
+            <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+        </div>
+        <div style="background:#eee; height:100px; width:150px; margin-top:40px; transform:rotate(2deg); border:1px solid #ccc; padding:5px; font-size:8px;">
+            <strong style="font-size:10px;">DAILY NEWS</strong><br>New patterns in cyber-deception detected...
+        </div>
+        <div style="background:#fff799; padding:5px; width:100px; position:absolute; bottom:20px; right:10px; transform:rotate(-5deg); box-shadow:2px 2px 2px rgba(0,0,0,0.1); font-size:12px;">
+            OPEN CASES: 3
+        </div>
+    </div>
+
+    <div id="mac-container" class="desk-item" onclick="showOverlay('services')">
+        <img src="assets/mac128k.png" id="mac-photo" alt="Vintage Macintosh 128k" />
+        <div id="mac-screen-overlay" onclick="event.stopPropagation(); startGame('pong')">
+            <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; position:relative; z-index:1;">
+                <span class="phosphor-text" style="font-size: 16px; letter-spacing:2px;">READY_</span>
+            </div>
+        </div>
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="keyboard" class="desk-item" onclick="showOverlay('about')">
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+    
+    <div id="mouse" class="desk-item" onclick="showOverlay('home')">
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="red-notebook" class="desk-item" onclick="showOverlay('cv')">
+        <div style="color:white; padding:15px; font-size:12px;">CURRICULUM VITAE</div>
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="envelope" class="desk-item" onclick="showOverlay('contact')">
+        <div style="padding:10px; font-size:8px;">erin@dockaresearch.com</div>
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="floppy" class="desk-item" onclick="startGame('snake')">
+        <div style="width:100%; height:20px; background:#fff; margin-top:5px; font-size:10px; text-align:center;">SNAKE.EXE</div>
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="coffee-mug" class="desk-item" onclick="showOverlay('easteregg')">
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="lamp" class="desk-item" onclick="toggleLamp()">
+        <svg viewBox="0 0 100 200">
+            <rect x="45" y="100" width="10" height="100" fill="#444" />
+            <path d="M20 100 L80 100 L90 50 L10 50 Z" fill="#666" />
+        </svg>
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="printer" class="desk-item" onclick="printCV()">
+        <div class="receipt">
+            ERIN STEPHENS<br>CV SUMMARY<br>----------<br>* Forensic Researcher<br>* Cyberpsychology<br>* OSINT Expert<br>----------
+        </div>
+        <div class="hover-circle"><svg class="circle-svg" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="45" ry="40"/></svg></div>
+    </div>
+
+    <div id="desk-surface">
+        <div id="lamp-light"></div>
+    </div>
+</div>
+
+<div id="overlay-container" onclick="closeOverlay()">
+    <div class="sys6-window" onclick="event.stopPropagation()">
+        <div class="sys6-titlebar">
+            <div class="sys6-close" onclick="closeOverlay()"></div>
+            <div class="sys6-title" id="overlay-title">Window</div>
+        </div>
+        <div class="sys6-content" id="overlay-content">
+            <!-- Content Injected Here -->
+        </div>
+    </div>
+</div>
+
+<div id="screensaver" onclick="stopScreensaver()">
+    <h1 class="phosphor-text" style="font-size: 40px; margin-bottom: 20px;">DOCKA RESEARCH — SYSTEM IDLE</h1>
+    <p class="phosphor-text">PRESS ANY KEY TO AWAKEN</p>
+</div>
+
+<button id="mute-btn" onclick="toggleMute()">🔊</button>
+
+<script>
+    /* Audio Context */
+    let audioCtx;
+    let isMuted = false;
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playSound(type) {
+        if (isMuted) return;
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'startup') {
+            // Mac Startup Chime (C Major)
+            [261.63, 329.63, 392.00, 523.25].forEach((freq, i) => {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.frequency.value = freq;
+                o.type = 'sine';
+                o.connect(g);
+                g.connect(audioCtx.destination);
+                g.gain.setValueAtTime(0.2, now + i * 0.1);
+                g.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+                o.start(now + i * 0.1);
+                o.stop(now + 1.5);
+            });
+        } else if (type === 'click') {
+            const noise = audioCtx.createBufferSource();
+            const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.005, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+            noise.buffer = buffer;
+            gain.gain.setValueAtTime(0.05, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.005);
+            noise.connect(gain);
+            noise.start();
+        } else if (type === 'whirr') {
+            osc.frequency.setValueAtTime(100, now);
+            osc.frequency.linearRampToValueAtTime(120, now + 0.4);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.8);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.8);
+            osc.start();
+            osc.stop(now + 0.8);
+        } else if (type === 'open') {
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            osc.start();
+            osc.stop(now + 0.2);
+        } else if (type === 'pong-paddle') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(440, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.start();
+            osc.stop(now + 0.05);
+        } else if (type === 'pong-wall') {
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(220, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.start();
+            osc.stop(now + 0.05);
+        } else if (type === 'hover') {
+            const noise = audioCtx.createBufferSource();
+            const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.003, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+            noise.buffer = buffer;
+            gain.gain.setValueAtTime(0.02, now);
+            noise.connect(gain);
+            noise.start();
+        }
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        document.getElementById('mute-btn').innerText = isMuted ? '🔇' : '🔊';
+    }
+
+    /* Overlays */
+    const contentMap = {
+        home: { title: "Welcome", body: "<h1>Docka Research</h1><p>Forensic Researcher Desk. Everything here is interactive. Click around to explore my work, research, and tools.</p>" },
+        services: { title: "Services", body: "<ul><li>Forensic Research</li><li>OSINT & Cryptocurrency Forensics</li><li>Training & Education</li><li>Cyberpsychology Consulting</li><li>Expert Analysis & Reports</li></ul>" },
+        about: { title: "About Erin", body: "Erin Stephens is a forensic researcher and doctoral candidate in forensic cyberpsychology. She works at the crossroads of how people behave, how they hide, and how they get found." },
+        contact: { title: "Contact", body: "Email: erin@dockaresearch.com<br><br><form style='display:flex; flex-direction:column; gap:10px;'><input type='text' placeholder='Name'><input type='email' placeholder='Email'><textarea placeholder='Message'></textarea><button type='button' onclick='closeOverlay()'>Send</button></form>" },
+        research: { title: "Research Case Files", body: "Current focus: Behavioral fingerprinting in digital environments.<br><br>Detailed analysis coming soon. Monitoring for signature-based deviations." },
+        cv: { title: "Curriculum Vitae", body: "Erin Stephens, PhD Candidate.<br><br>Selected Experience:<br>- Forensic Analyst (2018-Present)<br>- OSINT Training Lead<br>- Cyberpsychology Researcher<br><br>Full CV available upon request." },
+        easteregg: { title: "Coffee.sys", body: "The fuel of late-night forensics. Hot, black, and strictly necessary." }
+    };
+
+    function showOverlay(key) {
+        const data = contentMap[key];
+        document.getElementById('overlay-title').innerText = data.title;
+        document.getElementById('overlay-content').innerHTML = data.body;
+        document.getElementById('overlay-container').style.display = 'flex';
+        playSound('open');
+    }
+
+    function closeOverlay() {
+        document.getElementById('overlay-container').style.display = 'none';
+        if (gameLoop) cancelAnimationFrame(gameLoop);
+    }
+
+    /* Games */
+    let gameLoop;
+    function startGame(game) {
+        const container = document.getElementById('overlay-content');
+        const title = document.getElementById('overlay-title');
+        document.getElementById('overlay-container').style.display = 'flex';
+        
+        container.innerHTML = '<canvas id="game-canvas" width="400" height="300"></canvas>';
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (game === 'pong') {
+            title.innerText = "Pong v1.0 — Docka Research Systems";
+            runPong(canvas, ctx);
+        } else if (game === 'snake') {
+            title.innerText = "Snake.exe — Case File Navigator";
+            playSound('whirr');
+            runSnake(canvas, ctx);
+        }
+    }
+
+    function runPong(canvas, ctx) {
+        let p1y = 120, p2y = 120, bx = 200, by = 150, bvx = 3, bvy = 2;
+        let p1s = 0, p2s = 0;
+        let started = false;
+
+        function loop() {
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (!started) {
+                ctx.fillStyle = '#c8e8a0';
+                ctx.font = '20px VT323';
+                ctx.textAlign = 'center';
+                ctx.fillText('PRESS W/S TO START', 200, 150);
+                gameLoop = requestAnimationFrame(loop);
+                return;
+            }
+
+            // Ball
+            bx += bvx; by += bvy;
+            if (by < 0 || by > canvas.height) { bvy *= -1; playSound('pong-wall'); }
+            
+            // Paddles
+            ctx.fillStyle = '#c8e8a0';
+            ctx.fillRect(10, p1y, 10, 60);
+            ctx.fillRect(380, p2y, 10, 60);
+            ctx.fillRect(bx-4, by-4, 8, 8);
+
+            // AI
+            if (p2y + 30 < by) p2y += 2; else p2y -= 2;
+
+            // Collision
+            if (bx < 20 && by > p1y && by < p1y + 60) { bvx *= -1.1; bvx = Math.min(bvx, 8); playSound('pong-paddle'); }
+            if (bx > 380 && by > p2y && by < p2y + 60) { bvx *= -1.1; playSound('pong-paddle'); }
+
+            // Score
+            if (bx < 0) { p2s++; reset(); }
+            if (bx > canvas.width) { p1s++; reset(); }
+
+            ctx.font = '30px VT323';
+            ctx.fillText(`${p1s} : ${p2s}`, 200, 40);
+
+            if (p1s >= 7 || p2s >= 7) {
+                ctx.fillText(p1s >= 7 ? "YOU WIN" : "SYSTEM WINS", 200, 150);
+                cancelAnimationFrame(gameLoop);
+            } else {
+                gameLoop = requestAnimationFrame(loop);
+            }
+        }
+
+        function reset() { bx = 200; by = 150; bvx = 3 * (Math.random() > 0.5 ? 1 : -1); }
+        
+        window.onkeydown = (e) => {
+            started = true;
+            if (e.key === 'w') p1y -= 20;
+            if (e.key === 's') p1y += 20;
+            playSound('click');
+        };
+        loop();
+    }
+
+    function runSnake(canvas, ctx) {
+        let snake = [{x:10, y:10}], food = {x:15, y:15}, dx = 1, dy = 0, score = 0;
+        let speed = 150;
+
+        function loop() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = {x: Math.floor(Math.random()*20), y: Math.floor(Math.random()*15)};
+                playSound('pong-paddle');
+            } else {
+                snake.pop();
+            }
+
+            if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 15 || snake.slice(1).some(s => s.x === head.x && s.y === head.y)) {
+                ctx.fillStyle = '#c8e8a0';
+                ctx.font = '30px VT323';
+                ctx.fillText("GAME OVER", 130, 150);
+                return;
+            }
+
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#c8e8a0';
+            snake.forEach(s => ctx.fillRect(s.x*20, s.y*20, 18, 18));
+            ctx.fillText("□", food.x*20, food.y*20 + 15);
+            
+            ctx.font = '20px VT323';
+            ctx.fillText(`Files Found: ${score}`, 10, 20);
+            
+            setTimeout(loop, speed - Math.min(score*5, 100));
+        }
+
+        window.onkeydown = (e) => {
+            if (e.key === 'ArrowUp' && dy === 0) { dx = 0; dy = -1; }
+            if (e.key === 'ArrowDown' && dy === 0) { dx = 0; dy = 1; }
+            if (e.key === 'ArrowLeft' && dx === 0) { dx = -1; dy = 0; }
+            if (e.key === 'ArrowRight' && dx === 0) { dx = 1; dy = 0; }
+            playSound('click');
+        };
+        loop();
+    }
+
+    /* Lamp Logic */
+    function toggleLamp() {
+        document.body.classList.toggle('dark-mode');
+        playSound('click');
+    }
+
+    /* Printer */
+    function printCV() {
+        const printer = document.getElementById('printer');
+        printer.classList.add('printing');
+        playSound('whirr');
+        setTimeout(() => printer.classList.remove('printing'), 5000);
+    }
+
+    /* Screensaver */
+    let idleTime = 0;
+    setInterval(() => {
+        idleTime++;
+        if (idleTime > 60) startScreensaver();
+    }, 1000);
+
+    function startScreensaver() {
+        const ss = document.getElementById('screensaver');
+        ss.style.display = 'flex';
+        // Flying Toasters
+        for(let i=0; i<10; i++) {
+            const t = document.createElement('div');
+            t.className = 'toaster';
+            t.innerText = '🍞';
+            t.style.left = Math.random() * 100 + 'vw';
+            t.style.top = Math.random() * 100 + 'vh';
+            ss.appendChild(t);
+            animateToaster(t);
+        }
+    }
+
+    function animateToaster(t) {
+        let x = parseFloat(t.style.left), y = parseFloat(t.style.top);
+        function move() {
+            x -= 2; y += 2;
+            if (x < -50) x = window.innerWidth;
+            if (y > window.innerHeight) y = -50;
+            t.style.left = x + 'px';
+            t.style.top = y + 'px';
+            if (document.getElementById('screensaver').style.display === 'flex') requestAnimationFrame(move);
+        }
+        move();
+    }
+
+    function stopScreensaver() {
+        document.getElementById('screensaver').style.display = 'none';
+        document.querySelectorAll('.toaster').forEach(t => t.remove());
+        idleTime = 0;
+    }
+
+    window.onmousemove = () => idleTime = 0;
+    window.onkeydown = () => { idleTime = 0; stopScreensaver(); };
+
+    /* Initial Chime */
+    window.onload = () => {
+        setTimeout(() => playSound('startup'), 500);
+        document.querySelectorAll('.desk-item').forEach(item => {
+            item.addEventListener('mouseenter', () => playSound('hover'));
+        });
+    };
+</script>
+</body>
+</html>
