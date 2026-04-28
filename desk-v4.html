@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Erin Stephens — Docka Research</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    /* =============================================
+       DESIGN SYSTEM — 6 intentional values each
+       ============================================= */
+    :root {
+      /* Color Palette */
+      --cream:        #F5EFE2;
+      --mac-body:     #D5CCBA;
+      --mac-hi:       #E8E0CC;
+      --mac-mid:      #BFB49A;
+      --mac-lo:       #A89060;
+      --near-black:   #1C150A;
+      --phosphor:     #A4E07C;
+      --phosphor-bg:  #0C1808;
+      --wood-top:     #4A2E10;
+      --wood-bot:     #1A0804;
+      --amber:        #C87C18;
+      --white:        #FEFCF8;
+
+      /* Mac Proportions — responds to viewport */
+      --mac-w:    clamp(290px, 34vw, 490px);
+      --mac-h:    calc(var(--mac-w) * 1.075);
+      --scr-w:    calc(var(--mac-w) * 0.526);
+      --scr-h:    calc(var(--scr-w)  * 0.756);
+
+      /* Typography */
+      --f-serif: "DM Serif Display", Georgia, serif;
+      --f-mono:  "DM Mono", "Courier New", monospace;
+      --f-sys:   system-ui, -apple-system, "Helvetica Neue", sans-serif;
+
+      /* Easing */
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* =============================================
+       RESET
+       ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--cream);
+      color: var(--near-black);
+      font-family: var(--f-sys);
+      height: 100dvh;
+      width: 100vw;
+      overflow: hidden;
+      cursor: default;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* =============================================
+       SYSTEM 6 MENU BAR
+       ============================================= */
+    #menubar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 21px;
+      background: var(--white);
+      border-bottom: 1px solid var(--near-black);
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      z-index: 1000;
+    }
+
+    .m-item {
+      height: 21px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      font-family: var(--f-sys);
+      position: relative;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .m-item:hover { background: var(--near-black); color: var(--white); }
+
+    .m-right {
+      margin-left: auto;
+      font-size: 11px;
+      color: rgba(28,21,10,0.45);
+      padding-right: 8px;
+    }
+
+    /* Dropdowns */
+    .m-drop {
+      display: none;
+      position: absolute;
+      top: 21px; left: 0;
+      background: var(--white);
+      border: 1px solid var(--near-black);
+      box-shadow: 2px 2px 0 var(--near-black);
+      min-width: 190px;
+      z-index: 2000;
+    }
+    .m-item:hover .m-drop { display: block; }
+
+    .d-item {
+      padding: 3px 18px 3px 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .d-item:hover { background: var(--near-black); color: var(--white); }
+    .d-sep { border-top: 1px solid rgba(28,21,10,0.25); margin: 3px 0; }
+
+    /* =============================================
+       SCENE
+       ============================================= */
+    #scene {
+      position: fixed;
+      top: 21px; left: 0; right: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Linen grain texture via SVG filter */
+    #scene::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Desk surface — warm dark wood, bottom 26% */
+    #desk {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 26%;
+      background:
+        repeating-linear-gradient(87deg, transparent, transparent 28px,
+          rgba(255,255,255,0.011) 28px, rgba(255,255,255,0.011) 29px),
+        repeating-linear-gradient(93deg, transparent, transparent 90px,
+          rgba(0,0,0,0.035) 90px, rgba(0,0,0,0.035) 91px),
+        linear-gradient(180deg, var(--wood-top) 0%, #3A2010 40%, var(--wood-bot) 100%);
+    }
+    /* Desk edge: thin specular highlight */
+    #desk::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent, rgba(255,255,255,0.09) 20%,
+        rgba(255,255,255,0.18) 50%,
+        rgba(255,255,255,0.09) 80%, transparent);
+    }
+    /* Desk front edge */
+    #desk::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.5));
+    }
+
+    /* =============================================
+       IDENTITY — name above Mac
+       ============================================= */
+    #identity {
+      position: absolute;
+      top: 4%;
+      left: 0; right: 0;
+      text-align: center;
+      z-index: 5;
+      pointer-events: none;
+    }
+    #identity h1 {
+      font-family: var(--f-serif);
+      font-size: clamp(1.1rem, 2.4vw, 1.9rem);
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: 0.005em;
+      line-height: 1;
+      color: var(--near-black);
+    }
+    #identity p {
+      margin-top: 5px;
+      font-size: clamp(9px, 0.9vw, 11px);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(28,21,10,0.38);
+    }
+
+    /* =============================================
+       MAC STAGE
+       ============================================= */
+    #mac-stage {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 4%;
+    }
+
+    /* The Mac chassis */
+    #mac {
+      width: var(--mac-w);
+      height: var(--mac-h);
+      position: relative;
+      /* 6-layer smooth drop-shadow (Tobias Ahlin technique) */
+      filter:
+        drop-shadow(0 2px 2px rgba(0,0,0,0.04))
+        drop-shadow(0 4px 6px rgba(0,0,0,0.07))
+        drop-shadow(0 8px 14px rgba(0,0,0,0.10))
+        drop-shadow(0 18px 30px rgba(0,0,0,0.13))
+        drop-shadow(0 36px 60px rgba(0,0,0,0.09))
+        drop-shadow(0 72px 100px rgba(0,0,0,0.05));
+    }
+
+    /* Mac Plus plastic body */
+    #mac-body {
+      position: absolute;
+      inset: 0;
+      border-radius:
+        calc(var(--mac-w)*0.038)
+        calc(var(--mac-w)*0.038)
+        calc(var(--mac-w)*0.055)
+        calc(var(--mac-w)*0.055);
+      /* Top-left light source → warm cream to shadowed ochre */
+      background: linear-gradient(145deg,
+        var(--mac-hi)  0%,
+        var(--mac-body) 28%,
+        #C4B89A         58%,
+        #B0A282         78%,
+        var(--mac-lo)   100%
+      );
+      overflow: hidden;
+    }
+    /* Inner highlight: bright top-left edge, dark bottom-right */
+    #mac-body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow:
+        inset 1px 1px 0 rgba(255,255,255,0.55),
+        inset -1px -1px 0 rgba(0,0,0,0.12);
+      pointer-events: none;
+      z-index: 3;
+    }
+    /* Subtle front-face bevel — the Mac chassis had a raised border */
+    #mac-body::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow:
+        inset 0 0 0 calc(var(--mac-w)*0.018) rgba(0,0,0,0.06),
+        inset 0 0 0 calc(var(--mac-w)*0.019) rgba(255,255,255,0.08);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* =============================================
+       SCREEN SECTION — upper 70% of body
+       ============================================= */
+    #screen-section {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 70%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Thick CRT bezel */
+    #screen-bezel {
+      width: var(--scr-w);
+      height: var(--scr-h);
+      position: relative;
+      background: linear-gradient(155deg, #3C3028, #1A1008, #261A0C);
+      border-radius: 3px;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.9),
+        2px 4px 12px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* CRT glass with subtle dome convexity */
+    #screen {
+      position: absolute;
+      inset: calc(var(--scr-w)*0.038);
+      background: var(--phosphor-bg);
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,0.95),
+        inset 3px 3px 5px rgba(255,255,255,0.025),
+        inset -3px -3px 5px rgba(0,0,0,0.35);
+      cursor: default;
+    }
+    /* Phosphor ambient glow */
+    #screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 85% 65% at 50% 40%,
+        rgba(164,224,124,0.05) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 60;
+    }
+    /* CRT scanlines */
+    #screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0,0,0,0.055) 2px, rgba(0,0,0,0.055) 3px
+      );
+      pointer-events: none;
+      z-index: 61;
+    }
+
+    /* =============================================
+       SYSTEM 6 FINDER — inside screen
+       ============================================= */
+    #finder {
+      position: absolute;
+      inset: 0;
+      background: var(--phosphor);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    #finder.booted { opacity: 1; }
+
+    /* Finder inner menu bar */
+    #f-bar {
+      height: calc(var(--scr-w)*0.085);
+      min-height: 11px;
+      max-height: 16px;
+      background: var(--phosphor);
+      border-bottom: 1px solid var(--near-black);
+      display: flex;
+      align-items: center;
+      padding: 0 3px;
+      flex-shrink: 0;
+    }
+    .f-m {
+      font-size: clamp(7px, 1.1vw, 10px);
+      font-family: var(--f-sys);
+      padding: 0 4px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      color: var(--near-black);
+      white-space: nowrap;
+    }
+    .f-m:hover { background: var(--near-black); color: var(--phosphor); }
+
+    /* Finder desktop area */
+    #f-desk {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* =============================================
+       DESKTOP ICONS — Mac System 6 style
+       ============================================= */
+    .icon {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      cursor: pointer;
+      padding: 2px;
+      width: clamp(30px, 4vw, 46px);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .icon-g {
+      width: clamp(18px, 2.5vw, 26px);
+      height: clamp(15px, 2.2vw, 22px);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* Folder icon */
+    .icon-folder .icon-g::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 80%;
+      background: var(--phosphor);
+      border: 1px solid var(--near-black);
+    }
+    .icon-folder .icon-g::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 45%; height: 28%;
+      background: var(--phosphor);
+      border: 1px solid var(--near-black);
+      border-radius: 1px 2px 0 0;
+    }
+
+    /* Hard disk icon */
+    .icon-disk .icon-g::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--phosphor);
+      border: 1px solid var(--near-black);
+      border-radius: 1px;
+    }
+    .icon-disk .icon-g::after {
+      content: '';
+      position: absolute;
+      right: 2px;
+      top: 50%; transform: translateY(-50%);
+      width: 25%; height: 30%;
+      background: var(--near-black);
+      border-radius: 0.5px;
+    }
+
+    /* Document icon */
+    .icon-doc .icon-g::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--phosphor);
+      border: 1px solid var(--near-black);
+      clip-path: polygon(0 0, 72% 0, 100% 28%, 100% 100%, 0 100%);
+    }
+    .icon-doc .icon-g::after {
+      content: '';
+      position: absolute;
+      top: 0; right: -1px;
+      width: 30%; height: 30%;
+      background: transparent;
+      border-left: 1px solid var(--near-black);
+      border-bottom: 1px solid var(--near-black);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+
+    /* Trash icon */
+    .icon-trash .icon-g {
+      width: clamp(14px, 2vw, 20px);
+    }
+    .icon-trash .icon-g::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 10%; right: 10%;
+      height: 80%;
+      background: var(--phosphor);
+      border: 1px solid var(--near-black);
+      border-radius: 0 0 2px 2px;
+    }
+    .icon-trash .icon-g::after {
+      content: '';
+      position: absolute;
+      top: 15%; left: 0; right: 0;
+      height: 2px;
+      background: var(--near-black);
+    }
+
+    .icon-label {
+      font-size: clamp(5px, 0.7vw, 8px);
+      font-family: var(--f-sys);
+      color: var(--near-black);
+      text-align: center;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    /* Selected state: full color inversion */
+    .icon.sel .icon-g::before,
+    .icon.sel .icon-g::after { background: var(--near-black); }
+    .icon.sel .icon-label {
+      background: var(--near-black);
+      color: var(--phosphor);
+      padding: 0 2px;
+    }
+    .icon.sel .icon-folder .icon-g::before,
+    .icon.sel .icon-folder .icon-g::after,
+    .icon.sel .icon-disk .icon-g::before,
+    .icon.sel .icon-doc .icon-g::before { background: var(--near-black); }
+    .icon.sel .icon-disk .icon-g::after { background: var(--phosphor); }
+
+    #trash-icon {
+      position: absolute;
+      bottom: 5%; right: 6%;
+    }
+
+    /* =============================================
+       IN-SCREEN WINDOWS (System 6 modal)
+       ============================================= */
+    .f-window {
+      position: absolute;
+      background: var(--phosphor);
+      border: 1px solid var(--near-black);
+      box-shadow: 2px 2px 0 var(--near-black);
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+      min-width: 55%;
+      max-width: 90%;
+      max-height: 85%;
+    }
+    .f-window.open { display: flex; }
+
+    .f-win-bar {
+      height: 14px;
+      min-height: 10px;
+      background: repeating-linear-gradient(90deg,
+        rgba(28,21,10,0.25), rgba(28,21,10,0.25) 1px,
+        transparent 1px, transparent 3px);
+      border-bottom: 1px solid var(--near-black);
+      display: flex;
+      align-items: center;
+      padding: 0 3px;
+      cursor: grab;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .f-win-close {
+      width: 9px; height: 9px;
+      border: 1px solid var(--near-black);
+      background: var(--phosphor);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .f-win-close:hover { background: var(--near-black); }
+
+    .f-win-title {
+      flex: 1;
+      text-align: center;
+      font-size: clamp(6px, 0.8vw, 9px);
+      font-family: var(--f-sys);
+      font-weight: bold;
+      color: var(--near-black);
+      pointer-events: none;
+      padding-right: 12px;
+    }
+    .f-win-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 7px;
+      font-size: clamp(6px, 0.75vw, 9px);
+      font-family: var(--f-sys);
+      line-height: 1.5;
+      color: var(--near-black);
+    }
+    .f-win-body p { margin-bottom: 4px; }
+    .f-win-body strong { font-weight: bold; }
+
+    /* =============================================
+       BOTTOM SECTION — floppy, vents, badge
+       ============================================= */
+    #mac-bottom {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 30%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: calc(var(--mac-w)*0.024);
+      gap: calc(var(--mac-w)*0.04);
+    }
+
+    /* Ventilation grilles (left side of bottom panel) */
+    #vents {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--mac-w)*0.013);
+      margin-top: calc(var(--mac-w)*0.012);
+    }
+    .vent {
+      width: calc(var(--mac-w)*0.07);
+      height: 1.5px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(28,21,10,0.45) 15%,
+        rgba(28,21,10,0.45) 85%,
+        transparent 100%);
+      border-radius: 1px;
+    }
+
+    /* Floppy slot */
+    #floppy-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: calc(var(--mac-w)*0.022);
+    }
+    #floppy-slot {
+      width: calc(var(--mac-w)*0.305);
+      height: calc(var(--mac-w)*0.030);
+      background: linear-gradient(180deg, #060402 0%, #140E08 100%);
+      border: 1px solid rgba(0,0,0,0.65);
+      border-radius: 2px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
+      cursor: pointer;
+      position: relative;
+      transition: box-shadow 0.1s;
+    }
+    #floppy-slot::before {
+      content: '';
+      position: absolute;
+      top: 2px; left: 4px; right: 4px;
+      height: 1px;
+      background: rgba(255,255,255,0.04);
+    }
+    #floppy-slot:hover { box-shadow: inset 0 2px 5px rgba(0,0,0,0.9), 0 0 0 1px rgba(164,224,124,0.3); }
+
+    /* Power LED */
+    #power-led {
+      width: calc(var(--mac-w)*0.020);
+      height: calc(var(--mac-w)*0.020);
+      border-radius: 50%;
+      background: rgba(40,60,30,0.6);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.45);
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    #power-led.on {
+      background: #4A9030;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.4), 0 0 8px rgba(74,144,48,0.7);
+    }
+
+    /* Apple badge */
+    #apple-badge {
+      font-size: calc(var(--mac-w)*0.046);
+      opacity: 0.38;
+      margin-top: calc(var(--mac-w)*0.008);
+    }
+
+    /* Model label */
+    #model-label {
+      font-size: clamp(8px, 0.85vw, 10px);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(28,21,10,0.28);
+      font-family: var(--f-sys);
+      margin-top: 9px;
+      text-align: center;
+    }
+
+    /* =============================================
+       DESK OBJECTS
+       ============================================= */
+    .desk-obj {
+      position: absolute;
+      bottom: 0;
+      z-index: 6;
+      cursor: pointer;
+    }
+    .desk-obj:hover { filter: brightness(1.08); }
+    .desk-obj:active { filter: brightness(0.95); }
+
+    /* =============================================
+       BOOT ANIMATION
+       ============================================= */
+    #boot {
+      position: absolute;
+      inset: 0;
+      background: var(--phosphor-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      transition: opacity 0.5s ease 0.1s;
+    }
+    #boot.fade { opacity: 0; pointer-events: none; }
+
+    .happy-mac {
+      font-size: clamp(18px, 2.8vw, 30px);
+      opacity: 0;
+      animation: hm-appear 0.3s 0.7s ease forwards;
+    }
+    @keyframes hm-appear {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 0.9; transform: scale(1); }
+    }
+
+    /* =============================================
+       SCREENSAVER
+       ============================================= */
+    #screensaver {
+      position: absolute;
+      inset: 0;
+      background: var(--phosphor-bg);
+      display: none;
+      z-index: 160;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .toaster {
+      position: absolute;
+      font-size: clamp(12px, 2vw, 22px);
+      will-change: transform;
+    }
+
+    /* =============================================
+       FULL CONTENT OVERLAY (outside Mac)
+       ============================================= */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(28,21,10,0);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s ease;
+    }
+    #overlay.vis { display: flex; }
+    #overlay.active { background: rgba(28,21,10,0.5); }
+
+    .panel {
+      background: #FEFCF8;
+      border: 1px solid var(--near-black);
+      /* 6-layer smooth panel shadow */
+      box-shadow:
+        0 1px 2px  rgba(0,0,0,0.05),
+        0 3px 6px  rgba(0,0,0,0.07),
+        0 6px 12px rgba(0,0,0,0.09),
+        0 14px 28px rgba(0,0,0,0.11),
+        0 28px 56px rgba(0,0,0,0.07),
+        4px 4px 0  rgba(0,0,0,0.35);
+      max-width: min(660px, 92vw);
+      width: 100%;
+      max-height: 82vh;
+      display: flex;
+      flex-direction: column;
+      transform: scale(0.93) translateY(8px);
+      opacity: 0;
+      transition: transform 200ms var(--ease-spring), opacity 180ms ease;
+      pointer-events: none;
+    }
+    .panel.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Panel title bar */
+    .p-bar {
+      height: 30px;
+      background: var(--near-black);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      flex-shrink: 0;
+    }
+    .p-close {
+      width: 12px; height: 12px;
+      border: 1px solid rgba(255,255,255,0.35);
+      cursor: pointer;
+      margin-right: 12px;
+      flex-shrink: 0;
+      transition: background 0.08s;
+    }
+    .p-close:hover { background: rgba(255,255,255,0.25); }
+
+    .p-title {
+      font-size: 10px;
+      font-family: var(--f-sys);
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* Panel content */
+    .p-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: clamp(24px, 4vw, 44px);
+      font-family: var(--f-sys);
+    }
+
+    .p-content h2 {
+      font-family: var(--f-serif);
+      font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+      font-weight: 400;
+      line-height: 1.12;
+      margin-bottom: 22px;
+      letter-spacing: -0.01em;
+    }
+    .p-content p {
+      font-size: clamp(0.825rem, 1.1vw, 0.9375rem);
+      line-height: 1.75;
+      margin-bottom: 14px;
+      color: rgba(28,21,10,0.82);
+      max-width: 55ch;
+    }
+    .p-content ul {
+      margin: 0 0 16px 18px;
+    }
+    .p-content li {
+      font-size: clamp(0.825rem, 1.1vw, 0.9375rem);
+      line-height: 1.75;
+      margin-bottom: 9px;
+      color: rgba(28,21,10,0.82);
+    }
+    .p-content strong { color: var(--near-black); }
+    .p-content a { color: var(--near-black); text-underline-offset: 3px; }
+    .p-content a:hover { color: var(--amber); }
+
+    /* Footnote (a la Amanda Pinsker) */
+    .fn {
+      margin-top: 30px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(28,21,10,0.12);
+      font-size: clamp(0.7rem, 0.9vw, 0.8125rem);
+      color: rgba(28,21,10,0.45);
+      line-height: 1.65;
+    }
+
+    /* =============================================
+       MUTE BUTTON
+       ============================================= */
+    #mute-btn {
+      position: fixed;
+      bottom: 14px; right: 14px;
+      width: 30px; height: 30px;
+      background: rgba(248,244,240,0.85);
+      border: 1px solid rgba(28,21,10,0.14);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: background 0.1s;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    }
+    #mute-btn:hover { background: rgba(248,244,240,1); }
+
+    /* =============================================
+       DARK MODE
+       ============================================= */
+    body.dark {
+      background: #0E0C08;
+    }
+    body.dark #scene { background: #0E0C08; }
+    body.dark #identity h1 { color: var(--mac-body); }
+    body.dark #identity p { color: rgba(213,204,186,0.3); }
+    body.dark #model-label { color: rgba(213,204,186,0.18); }
+    body.dark #menubar {
+      background: #1C150A;
+      color: var(--mac-body);
+      border-color: rgba(213,204,186,0.3);
+    }
+    body.dark .m-item:hover { background: var(--mac-body); color: var(--near-black); }
+
+    /* =============================================
+       RESPONSIVE
+       ============================================= */
+    @media (max-width: 580px) {
+      :root {
+        --mac-w: min(88vw, 290px);
+      }
+      #identity h1 { font-size: 1.1rem; }
+      .p-content { padding: 20px; }
+    }
+    @media (max-height: 600px) {
+      #identity { top: 1%; }
+      #mac-stage { margin-bottom: 2%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================
+     SYSTEM 6 MENU BAR
+     ============================================= -->
+<nav id="menubar" role="navigation" aria-label="Site navigation">
+  <div class="m-item">
+    &#63743;
+    <div class="m-drop">
+      <div class="d-item" onclick="openPanel('about')">About Erin Stephens</div>
+      <div class="d-sep"></div>
+      <div class="d-item" onclick="openPanel('contact')">Get in Touch</div>
+      <div class="d-item" onclick="openPanel('home')">Docka Research</div>
+    </div>
+  </div>
+  <div class="m-item">
+    File
+    <div class="m-drop">
+      <div class="d-item" onclick="openPanel('about')">About</div>
+      <div class="d-item" onclick="openPanel('services')">Services</div>
+      <div class="d-sep"></div>
+      <div class="d-item" onclick="window.print()">Print CV…</div>
+    </div>
+  </div>
+  <div class="m-item">
+    Work
+    <div class="m-drop">
+      <div class="d-item" onclick="openPanel('research')">Research</div>
+      <div class="d-item" onclick="openPanel('services')">Services</div>
+      <div class="d-item" onclick="openPanel('cv')">Curriculum Vitae</div>
+    </div>
+  </div>
+  <div class="m-item">
+    Special
+    <div class="m-drop">
+      <div class="d-item" onclick="toggleLamp()">Desk Lamp</div>
+      <div class="d-sep"></div>
+      <div class="d-item" onclick="launchGame('pong')">System Pong…</div>
+      <div class="d-item" onclick="launchGame('snake')">Snake.exe</div>
+    </div>
+  </div>
+  <div class="m-right" id="clock">—:—</div>
+</nav>
+
+<!-- =============================================
+     SCENE
+     ============================================= -->
+<main id="scene" role="main">
+  <div id="desk" aria-hidden="true"></div>
+
+  <!-- Name & tagline -->
+  <header id="identity">
+    <h1>Erin Stephens</h1>
+    <p>Forensic Research &nbsp;·&nbsp; OSINT &nbsp;·&nbsp; Cyberpsychology</p>
+  </header>
+
+  <!-- The Mac -->
+  <div id="mac-stage">
+    <div id="mac" aria-label="Interactive Macintosh Plus">
+      <div id="mac-body">
+
+        <!-- Screen section -->
+        <div id="screen-section" aria-hidden="true">
+          <div id="screen-bezel">
+            <div id="screen">
+              <!-- Boot screen -->
+              <div id="boot"><div class="happy-mac">☺</div></div>
+              <!-- Flying toasters screensaver -->
+              <div id="screensaver" onclick="stopSS()"></div>
+              <!-- Finder -->
+              <div id="finder">
+                <div id="f-bar">
+                  <div class="f-m">&#63743;</div>
+                  <div class="f-m">File</div>
+                  <div class="f-m">Edit</div>
+                  <div class="f-m">View</div>
+                  <div class="f-m">Special</div>
+                </div>
+                <div id="f-desk">
+                  <!-- Hard disk -->
+                  <div class="icon icon-disk"
+                       style="top:8%; right:6%;"
+                       onclick="iClick('home',this)"
+                       ondblclick="openPanel('home')"
+                       title="Docka Research HD">
+                    <div class="icon-g"></div>
+                    <div class="icon-label">Docka HD</div>
+                  </div>
+                  <!-- About -->
+                  <div class="icon icon-folder"
+                       style="top:28%; left:10%;"
+                       onclick="iClick('about',this)"
+                       ondblclick="openPanel('about')"
+                       title="About">
+                    <div class="icon-g"></div>
+                    <div class="icon-label">About</div>
+                  </div>
+                  <!-- Services -->
+                  <div class="icon icon-folder"
+                       style="top:28%; right:10%;"
+                       onclick="iClick('services',this)"
+                       ondblclick="openPanel('services')"
+                       title="Services">
+                    <div class="icon-g"></div>
+                    <div class="icon-label">Services</div>
+                  </div>
+                  <!-- Research -->
+                  <div class="icon icon-doc"
+                       style="bottom:22%; left:10%;"
+                       onclick="iClick('research',this)"
+                       ondblclick="openPanel('research')"
+                       title="Research">
+                    <div class="icon-g"></div>
+                    <div class="icon-label">Research</div>
+                  </div>
+                  <!-- Contact -->
+                  <div class="icon icon-doc"
+                       style="bottom:22%; right:10%;"
+                       onclick="iClick('contact',this)"
+                       ondblclick="openPanel('contact')"
+                       title="Contact">
+                    <div class="icon-g"></div>
+                    <div class="icon-label">Contact</div>
+                  </div>
+                  <!-- Trash -->
+                  <div class="icon icon-trash" id="trash-icon"
+                       onclick="iClick('trash',this)"
+                       title="Trash">
+                    <div class="icon-g"></div>
+                    <div class="icon-label">Trash</div>
+                  </div>
+                </div><!-- /f-desk -->
+              </div><!-- /finder -->
+            </div><!-- /screen -->
+          </div><!-- /screen-bezel -->
+        </div><!-- /screen-section -->
+
+        <!-- Bottom: vents, floppy, badge -->
+        <div id="mac-bottom" aria-hidden="true">
+          <div id="vents">
+            <div class="vent"></div>
+            <div class="vent"></div>
+            <div class="vent"></div>
+            <div class="vent"></div>
+            <div class="vent"></div>
+            <div class="vent"></div>
+            <div class="vent"></div>
+          </div>
+          <div id="floppy-col">
+            <div id="floppy-slot"
+                 onclick="floppyClick()"
+                 title="Floppy drive"></div>
+            <div id="power-led"></div>
+          </div>
+          <div id="apple-badge">&#63743;</div>
+        </div>
+
+      </div><!-- /mac-body -->
+    </div><!-- /mac -->
+
+    <div id="model-label">Macintosh Plus &ensp;·&ensp; 1986</div>
+  </div><!-- /mac-stage -->
+
+  <!-- Desk object: coffee mug (SVG for quality) -->
+  <div class="desk-obj" id="mug-obj"
+       onclick="openPanel('coffee')"
+       title="Coffee"
+       style="left:calc(50% - var(--mac-w)*0.68); transform:translateX(-50%);"
+       aria-label="Coffee mug easter egg">
+    <svg width="38" height="42" viewBox="0 0 38 42" fill="none" aria-hidden="true">
+      <rect x="2" y="11" width="25" height="27" rx="3" fill="#7A5234" stroke="#3E2010" stroke-width="1.5"/>
+      <rect x="3" y="12" width="23" height="9" rx="1" fill="#5A3520" opacity="0.35"/>
+      <ellipse cx="14.5" cy="11" rx="12.5" ry="3" fill="#5A3520"/>
+      <path d="M27 17 Q34 17 34 22 Q34 27 27 27"
+            stroke="#3E2010" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- steam -->
+      <path d="M9 7 Q10 4.5 9 2" stroke="#B8A898" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path d="M14.5 6 Q15.5 3.5 14.5 1" stroke="#B8A898" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.45"/>
+      <path d="M20 7 Q21 4.5 20 2" stroke="#B8A898" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.45"/>
+    </svg>
+  </div>
+
+</main><!-- /scene -->
+
+<!-- =============================================
+     FULL CONTENT OVERLAY
+     ============================================= -->
+<div id="overlay" onclick="handleOverlayClick(event)" role="dialog" aria-modal="true">
+  <div class="panel" id="panel">
+    <div class="p-bar">
+      <div class="p-close" onclick="closeOverlay()" title="Close" role="button" aria-label="Close"></div>
+      <div class="p-title" id="p-title">—</div>
+    </div>
+    <div class="p-content" id="p-body">
+      <!-- injected by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Mute toggle -->
+<button id="mute-btn" onclick="toggleMute()" aria-label="Toggle sound" title="Toggle sound">🔊</button>
+
+<script>
+  /* =============================================
+     AUDIO ENGINE
+     ============================================= */
+  let muted = false;
+  let ctx;
+
+  function audio() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    return ctx;
+  }
+
+  function snd(type) {
+    if (muted) return;
+    try {
+      const c = audio(), now = c.currentTime;
+      const g = c.createGain();
+      g.connect(c.destination);
+
+      if (type === 'startup') {
+        // Mac startup chord — clean sine arpeggio
+        [261.63, 329.63, 392.00, 523.25].forEach((f, i) => {
+          const o = c.createOscillator(), g2 = c.createGain();
+          o.type = 'sine'; o.frequency.value = f;
+          o.connect(g2); g2.connect(c.destination);
+          const t = now + i * 0.09;
+          g2.gain.setValueAtTime(0, t);
+          g2.gain.linearRampToValueAtTime(0.16, t + 0.06);
+          g2.gain.exponentialRampToValueAtTime(0.001, t + 1.4);
+          o.start(t); o.stop(t + 1.5);
+        });
+      } else if (type === 'click') {
+        const o = c.createOscillator();
+        o.type = 'sine'; o.frequency.value = 700;
+        o.connect(g);
+        g.gain.setValueAtTime(0.05, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+        o.start(now); o.stop(now + 0.04);
+      } else if (type === 'open') {
+        const o = c.createOscillator();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(380, now);
+        o.frequency.exponentialRampToValueAtTime(600, now + 0.13);
+        o.connect(g);
+        g.gain.setValueAtTime(0.07, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+        o.start(now); o.stop(now + 0.17);
+      } else if (type === 'close') {
+        const o = c.createOscillator();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(400, now);
+        o.frequency.exponentialRampToValueAtTime(200, now + 0.1);
+        o.connect(g);
+        g.gain.setValueAtTime(0.055, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        o.start(now); o.stop(now + 0.12);
+      } else if (type === 'floppy') {
+        for (let i = 0; i < 4; i++) {
+          const o = c.createOscillator(), g2 = c.createGain();
+          o.type = 'sawtooth';
+          const t = now + i * 0.22;
+          o.frequency.setValueAtTime(85, t);
+          o.frequency.linearRampToValueAtTime(65, t + 0.18);
+          o.connect(g2); g2.connect(c.destination);
+          g2.gain.setValueAtTime(0.04, t);
+          g2.gain.linearRampToValueAtTime(0, t + 0.18);
+          o.start(t); o.stop(t + 0.2);
+        }
+      }
+    } catch(e) {/* silently fail */}
+  }
+
+  /* =============================================
+     CLOCK
+     ============================================= */
+  function tick() {
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0');
+    const m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${h}:${m}`;
+  }
+  tick(); setInterval(tick, 20000);
+
+  /* =============================================
+     BOOT SEQUENCE
+     ============================================= */
+  window.addEventListener('load', () => {    const boot = document.getElementById('boot');
+    const finder = document.getElementById('finder');
+    const led = document.getElementById('power-led');
+
+    setTimeout(() => led.classList.add('on'), 450);
+    setTimeout(() => snd('startup'), 650);
+    setTimeout(() => {
+      boot.classList.add('fade');
+      setTimeout(() => {
+        boot.remove();
+        finder.classList.add('booted');
+      }, 520);
+    }, 2200);
+  });
+
+  /* =============================================
+     ICON INTERACTION (Mac-style single/double click)
+     ============================================= */
+  let selIcon = null;
+  let lastT = 0, lastId = null;
+
+  function iClick(id, el) {
+    if (selIcon && selIcon !== el) selIcon.classList.remove('sel');
+    el.classList.toggle('sel');
+    selIcon = el.classList.contains('sel') ? el : null;
+    snd('click');
+
+    // Double-click: open panel
+    const now = Date.now();
+    if (now - lastT < 380 && lastId === id) openPanel(id);
+    lastT = now; lastId = id;
+  }
+
+  /* =============================================
+     FLOPPY
+     ============================================= */
+  function floppyClick() {
+    snd('floppy');
+    setTimeout(() => openPanel('coffee'), 300);
+  }
+
+  /* =============================================
+     CONTENT MAP — Real content, real voice
+     ============================================= */
+  const CONTENT = {
+    home: {
+      title: 'Docka Research',
+      html: `
+        <h2>The work of finding what was meant to stay hidden.</h2>
+        <p>Docka Research is Erin Stephens' forensic practice — OSINT analysis, cryptocurrency tracing, digital behavioral profiling, and the research that sits at the intersection of how people act online and how those actions persist.</p>
+        <p>The name comes from a small harbor in the California coast. The idea of following things to where they dock.</p>
+        <p>Double-click any folder on the desktop to explore, or use the &#63743; menu above.</p>
+        <div class="fn">Montecito, CA &ensp;·&ensp; Practice est. 2018 &ensp;·&ensp; <a href="mailto:erin@dockaresearch.com">erin@dockaresearch.com</a></div>
+      `
+    },
+    about: {
+      title: 'About',
+      html: `
+        <h2>Erin Stephens</h2>
+        <p>Forensic researcher. OSINT analyst. Doctoral candidate in forensic cyberpsychology. Granddaughter of Millard Sheets.<sup>†</sup></p>
+        <p>Erin's work lives at the intersection of human psychology and digital evidence — the question of what people do when they think no one is watching, and what they leave behind when they're wrong. She's spent years developing methods for identifying behavioral fingerprints in digital environments: the patterns that persist even when someone is trying hard not to leave any.</p>
+        <p>She's also lived most of her adult life navigating a complex medical picture that doesn't fit neatly into existing boxes. That experience of being a researcher in your own case shapes how she works with every client who comes to her with a story no one else has been able to crack.<sup>‡</sup></p>
+        <div class="fn">
+          <sup>†</sup> Millard Sheets (1907–1989) — California painter, muralist, architect. One of his Hawaii paintings hangs in the office. On hard days it helps to look at the water.<br><br>
+          <sup>‡</sup> This is not a metaphor. She literally keeps a research database on her own lab work. Old habits.
+        </div>
+      `
+    },
+    services: {
+      title: 'Services',
+      html: `
+        <h2>What I Do</h2>
+        <ul>
+          <li><strong>OSINT &amp; Open Source Intelligence</strong> — Comprehensive digital footprint analysis, entity mapping, network tracing. Finding people and entities that don't want to be found.</li>
+          <li><strong>Cryptocurrency Forensics</strong> — Following digital assets through blockchain infrastructure. Connecting wallet addresses to real-world actors. Litigation-ready reporting.</li>
+          <li><strong>Forensic Research &amp; Case Support</strong> — Deep-dive analysis for attorneys, investigators, journalists, and due diligence teams.</li>
+          <li><strong>Cyberpsychology Consulting</strong> — Behavioral profiling in digital environments. Understanding the human behind the screen — and why they did what they did.</li>
+          <li><strong>Expert Testimony &amp; Reporting</strong> — Clear documentation of complex digital findings for courts, arbitrations, and regulatory proceedings.</li>
+          <li><strong>Training &amp; Workshops</strong> — Specialized instruction for investigators, legal professionals, and corporate security teams.</li>
+        </ul>
+        <div class="fn">All engagements begin with a free, confidential consultation. <a href="mailto:erin@dockaresearch.com">Reach out to discuss your matter.</a></div>
+      `
+    },
+    research: {
+      title: 'Research',
+      html: `
+        <h2>Active Research</h2>
+        <p>Current doctoral focus: behavioral fingerprinting in digital environments — the persistent signature patterns that emerge from online behavior even when actors are actively attempting to conceal identity.</p>
+        <p>The central question: what cognitive patterns survive sophisticated technical countermeasures? The answer, consistently, is more than people expect.</p>
+        <p>Adjacent work examines the psychological architecture of fraud — how bad actors build false credibility, the micro-decisions that reveal motive, and how forensic analysis recovers human signal from digital noise.</p>
+        <div class="fn">Research outputs available to qualified collaborators and journalists working in the public interest. <a href="mailto:erin@dockaresearch.com">Inquire directly.</a></div>
+      `
+    },
+    contact: {
+      title: 'Contact',
+      html: `
+        <h2>Get in Touch</h2>
+        <p>For case inquiries, consulting engagements, expert testimony, or general correspondence:</p>
+        <p><strong><a href="mailto:erin@dockaresearch.com">erin@dockaresearch.com</a></strong></p>
+        <p>Response within 24–48 hours. Initial consultations are free and held in confidence.</p>
+        <div class="fn">For matters requiring encrypted correspondence, PGP key available on request. Signal available for sensitive inquiries.<br><br>
+        This is not a form. It's a direct line. She reads it herself.</div>
+      `
+    },
+    cv: {
+      title: 'Curriculum Vitae',
+      html: `
+        <h2>Erin Stephens</h2>
+        <p><strong>Education</strong><br>
+        PhD Candidate, Forensic Cyberpsychology<br>
+        Dissertation: <em>Behavioral Fingerprinting in Digital Deception</em></p>
+        <p><strong>Practice</strong><br>
+        Principal, Docka Research — 2018 to present<br>
+        Forensic research, OSINT, cryptocurrency forensics, cyberpsychology consulting<br>
+        Montecito, California</p>
+        <p><strong>Specializations</strong><br>
+        Open source intelligence &ensp;·&ensp; Blockchain forensics &ensp;·&ensp; Digital behavioral analysis &ensp;·&ensp; Cyberpsychology &ensp;·&ensp; Expert testimony &ensp;·&ensp; Investigative research</p>
+        <div class="fn">Full curriculum vitae available upon formal request. <a href="mailto:erin@dockaresearch.com">Request here.</a></div>
+      `
+    },
+    coffee: {
+      title: 'System Notice',
+      html: `
+        <h2>coffee.sys — Active</h2>
+        <p>Hot. Black. No sugar. Non-negotiable.</p>
+        <p>Runtime: <strong>continuous</strong>. Status: <strong>critical infrastructure</strong>.</p>
+        <div class="fn">The Mac was released in 1984. This coffee mug is from that same general era. Both still running. ☕</div>
+      `
+    },
+    trash: {
+      title: 'Trash',
+      html: `<h2>Trash</h2><p>Empty. Everything worth keeping is filed.</p>`
+    }
+  };
+
+  /* =============================================
+     OVERLAY SYSTEM
+     ============================================= */
+  let isOpen = false;
+
+  function openPanel(id) {
+    const data = CONTENT[id];
+    if (!data) return;
+    const ol = document.getElementById('overlay');
+    const panel = document.getElementById('panel');
+    document.getElementById('p-title').textContent = data.title;
+    document.getElementById('p-body').innerHTML = data.html;
+
+    ol.classList.add('vis');
+    requestAnimationFrame(() => {
+      ol.classList.add('active');
+      panel.classList.add('open');
+    });
+    isOpen = true;
+    snd('open');
+  }
+
+  function closeOverlay() {
+    const ol = document.getElementById('overlay');
+    const panel = document.getElementById('panel');
+    ol.classList.remove('active');
+    panel.classList.remove('open');
+    snd('close');
+    setTimeout(() => ol.classList.remove('vis'), 220);
+    isOpen = false;
+    if (gRunning) stopGame();
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('overlay')) closeOverlay();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isOpen) closeOverlay();
+  });
+
+  /* =============================================
+     LAMP TOGGLE (dark mode)
+     ============================================= */
+  function toggleLamp() {
+    document.body.classList.toggle('dark');
+    snd('click');
+  }
+
+  /* =============================================
+     MUTE
+     ============================================= */
+  function toggleMute() {
+    muted = !muted;
+    document.getElementById('mute-btn').textContent = muted ? '🔇' : '🔊';
+  }
+
+  /* =============================================
+     IDLE / SCREENSAVER (45s)
+     ============================================= */
+  let idle = 0, ssOn = false;
+  setInterval(() => {
+    idle++;
+    if (idle > 45 && !ssOn && !isOpen) startSS();
+  }, 1000);
+
+  document.addEventListener('mousemove', () => { idle = 0; });
+  document.addEventListener('keydown',   () => { idle = 0; if(ssOn) stopSS(); });
+
+  function startSS() {
+    const ss = document.getElementById('screensaver');
+    ss.style.display = 'block';
+    ss.innerHTML = '';
+    ssOn = true;
+    for (let i = 0; i < 7; i++) spawnToaster();
+  }
+  function stopSS() {
+    const ss = document.getElementById('screensaver');
+    ss.style.display = 'none';
+    ss.innerHTML = '';
+    ssOn = false;
+    idle = 0;
+  }
+  function spawnToaster() {
+    if (!ssOn) return;
+    const ss = document.getElementById('screensaver');
+    const t = document.createElement('div');
+    t.className = 'toaster';
+    t.textContent = Math.random() > 0.35 ? '🍞' : '🔥';
+    const sx = Math.random() * 95;
+    const sy = Math.random() * 80;
+    t.style.cssText = `left:${sx}%;top:${sy}%;animation:none;`;
+    ss.appendChild(t);
+    const dur = 3000 + Math.random() * 3000;
+    const dx = -(80 + Math.random()*60);
+    const dy = 80 + Math.random() * 60;
+    t.animate([
+      {transform:'translate(0,0)', opacity:1},
+      {transform:`translate(${dx}px,${dy}px)`, opacity:0}
+    ], { duration: dur, easing: 'linear' }).onfinish = () => {
+      if (t.parentNode) t.remove();
+      spawnToaster();
+    };
+  }
+
+  /* =============================================
+     GAMES
+     ============================================= */
+  let gRunning = false, gRaf;
+
+  function launchGame(type) {
+    document.getElementById('p-title').textContent = type === 'pong' ? 'System Pong v1.0' : 'Snake.exe';
+    document.getElementById('p-body').innerHTML =
+      `<canvas id="gc" width="460" height="290"
+        style="display:block;background:#0A0E06;border:1px solid #2A3A1A;margin:0 auto;cursor:none;"></canvas>`;
+
+    const ol = document.getElementById('overlay');
+    const panel = document.getElementById('panel');
+    ol.classList.add('vis');
+    requestAnimationFrame(() => { ol.classList.add('active'); panel.classList.add('open'); });
+    isOpen = true;
+    gRunning = true;
+
+    const cv = document.getElementById('gc');
+    const cx = cv.getContext('2d');
+    if (type === 'pong') pong(cv, cx);
+    else snake(cv, cx);
+  }
+
+  function stopGame() { gRunning = false; if(gRaf) cancelAnimationFrame(gRaf); }
+
+  function pong(cv, cx) {
+    const G = '#A4E07C', W = cv.width, H = cv.height;
+    let p1y = H/2-30, p2y = H/2-30, bx = W/2, by = H/2, bvx = 3.2, bvy = 2.4;
+    let s1 = 0, s2 = 0;
+
+    cv.addEventListener('mousemove', e => {
+      const r = cv.getBoundingClientRect();
+      p1y = Math.min(Math.max(e.clientY - r.top - 30, 0), H - 60);
+    });
+
+    function loop() {
+      if (!gRunning) return;
+      bx += bvx; by += bvy;
+      if (by < 0 || by > H) bvy *= -1;
+      if (bx < 18 && by > p1y && by < p1y+60) { bvx = Math.abs(bvx)*1.04; snd('click'); }
+      if (bx > W-18 && by > p2y && by < p2y+60) { bvx = -Math.abs(bvx)*1.04; snd('click'); }
+      if (bx < 0) { s2++; bx=W/2; by=H/2; bvx=3.2; }
+      if (bx > W)  { s1++; bx=W/2; by=H/2; bvx=-3.2; }
+      // AI tracks ball
+      const aim = by - 30;
+      if (p2y + 2 < aim) p2y = Math.min(p2y + 2.8, H-60);
+      else if (p2y - 2 > aim) p2y = Math.max(p2y - 2.8, 0);
+
+      cx.fillStyle = '#0A0E06'; cx.fillRect(0,0,W,H);
+      cx.fillStyle = G;
+      cx.fillRect(8, p1y, 10, 60);
+      cx.fillRect(W-18, p2y, 10, 60);
+      cx.fillRect(bx-4, by-4, 8, 8);
+      // dashed center
+      cx.save();
+      cx.setLineDash([5,5]); cx.strokeStyle=G; cx.globalAlpha=0.15; cx.lineWidth=1;
+      cx.beginPath(); cx.moveTo(W/2,0); cx.lineTo(W/2,H); cx.stroke();
+      cx.restore();
+      cx.fillStyle=G; cx.font='18px monospace'; cx.textAlign='center';
+      cx.fillText(`${s1}   ${s2}`, W/2, 22);
+      if (s1>=7||s2>=7) {
+        cx.font='22px monospace';
+        cx.fillText(s1>=7?'YOU WIN':'CPU WINS',W/2,H/2);
+        gRunning=false; return;
+      }
+      gRaf = requestAnimationFrame(loop);
+    }
+    loop();
+  }
+
+  function snake(cv, cx) {
+    const G = '#A4E07C', S = 16, CW = Math.floor(cv.width/S), CH = Math.floor(cv.height/S);
+    let body = [{x:10,y:8}], food = rf(), dx=1, dy=0, score=0;
+    function rf() { return {x:Math.floor(Math.random()*CW), y:Math.floor(Math.random()*CH)}; }
+
+    document.addEventListener('keydown', kh);
+    function kh(e) {
+      if(!gRunning) return;
+      const map = {ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+      const d = map[e.key];
+      if (d && !(dx===-d[0]&&dy===-d[1])) { dx=d[0]; dy=d[1]; }
+    }
+
+    function loop() {
+      if (!gRunning) return;
+      const h = {x: body[0].x+dx, y: body[0].y+dy};
+      body.unshift(h);
+      if (h.x===food.x && h.y===food.y) { score++; food=rf(); snd('click'); }
+      else body.pop();
+      if (h.x<0||h.x>=CW||h.y<0||h.y>=CH||body.slice(1).some(s=>s.x===h.x&&s.y===h.y)) {
+        cx.fillStyle=G; cx.font='20px monospace'; cx.textAlign='center';
+        cx.fillText(`GAME OVER  ${score} pts`, cv.width/2, cv.height/2);
+        document.removeEventListener('keydown', kh);
+        gRunning=false; return;
+      }
+      cx.fillStyle='#0A0E06'; cx.fillRect(0,0,cv.width,cv.height);
+      cx.fillStyle=G; body.forEach(s=>cx.fillRect(s.x*S+1,s.y*S+1,S-2,S-2));
+      cx.fillStyle='#E08040'; cx.fillRect(food.x*S+1,food.y*S+1,S-2,S-2);
+      cx.fillStyle=G; cx.font='10px monospace'; cx.textAlign='left';
+      cx.fillText(`Score: ${score}`,6,12);
+      setTimeout(loop, Math.max(75, 130-score*4));
+    }
+    loop();
+  }
+</script>
+</body>
+</html>
