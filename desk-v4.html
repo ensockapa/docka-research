@@ -5,25 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Erin Stephens — Docka Research</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <style>
     /* =============================================
        DESIGN SYSTEM — 6 intentional values each
        ============================================= */
     :root {
-      /* Color Palette */
-      --cream:        #F5EFE2;
-      --mac-body:     #D5CCBA;
-      --mac-hi:       #E8E0CC;
-      --mac-mid:      #BFB49A;
-      --mac-lo:       #A89060;
+      /* Color Palette — authentic 1984 Mac */
+      --cream:        #F2EDE3;
+      --mac-body:     #D8CEBC;   /* Pantone warm cream — original 128k plastic */
+      --mac-hi:       #EAE2CE;
+      --mac-mid:      #C4B8A0;
+      --mac-lo:       #A89878;
       --near-black:   #1C150A;
-      --phosphor:     #A4E07C;
-      --phosphor-bg:  #0C1808;
+      --mac-screen:   #F5F5F5;   /* original Mac screen: near-white */
+      --mac-black:    #000000;   /* pure black for UI elements */
       --wood-top:     #4A2E10;
       --wood-bot:     #1A0804;
       --amber:        #C87C18;
-      --white:        #FEFCF8;
+      --white:        #FFFFFF;
 
       /* Mac Proportions — responds to viewport */
       --mac-w:    clamp(290px, 34vw, 490px);
@@ -32,9 +32,10 @@
       --scr-h:    calc(var(--scr-w)  * 0.756);
 
       /* Typography */
-      --f-serif: "DM Serif Display", Georgia, serif;
-      --f-mono:  "DM Mono", "Courier New", monospace;
-      --f-sys:   system-ui, -apple-system, "Helvetica Neue", sans-serif;
+      --f-serif:  "DM Serif Display", Georgia, serif;
+      --f-mono:   "DM Mono", "Courier New", monospace;
+      --f-sys:    system-ui, -apple-system, "Helvetica Neue", sans-serif;
+      --f-mac:    "Geneva", "Helvetica Neue", "Arial", sans-serif; /* authentic Mac screen font */
 
       /* Easing */
       --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -291,50 +292,34 @@
         inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
-    /* CRT glass with subtle dome convexity */
+    /* Mac screen — crisp white, no CRT effects (original Mac was paper-white) */
     #screen {
       position: absolute;
       inset: calc(var(--scr-w)*0.038);
-      background: var(--phosphor-bg);
-      border-radius: 2px;
+      background: var(--mac-screen);
+      border-radius: 1px;
       overflow: hidden;
-      box-shadow:
-        inset 0 0 0 1px rgba(0,0,0,0.95),
-        inset 3px 3px 5px rgba(255,255,255,0.025),
-        inset -3px -3px 5px rgba(0,0,0,0.35);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.5);
       cursor: default;
     }
-    /* Phosphor ambient glow */
+    /* Very subtle inner vignette — just the edges */
     #screen::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 85% 65% at 50% 40%,
-        rgba(164,224,124,0.05) 0%, transparent 100%);
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.08);
       pointer-events: none;
       z-index: 60;
     }
-    /* CRT scanlines */
-    #screen::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent, transparent 2px,
-        rgba(0,0,0,0.055) 2px, rgba(0,0,0,0.055) 3px
-      );
-      pointer-events: none;
-      z-index: 61;
-    }
+    #screen::after { display: none; }
 
     /* =============================================
-       SYSTEM 6 FINDER — inside screen
+       SYSTEM 1 FINDER — inside screen (authentic)
        ============================================= */
     #finder {
       position: absolute;
       inset: 0;
-      background: var(--phosphor);
+      background: var(--mac-screen);
       display: flex;
       flex-direction: column;
       opacity: 0;
@@ -342,40 +327,41 @@
     }
     #finder.booted { opacity: 1; }
 
-    /* Finder inner menu bar */
+    /* System 1 menu bar — white bg, black text, black border */
     #f-bar {
       height: calc(var(--scr-w)*0.085);
       min-height: 11px;
       max-height: 16px;
-      background: var(--phosphor);
-      border-bottom: 1px solid var(--near-black);
+      background: #fff;
+      border-bottom: 1px solid #000;
       display: flex;
       align-items: center;
-      padding: 0 3px;
+      padding: 0 2px;
       flex-shrink: 0;
     }
     .f-m {
       font-size: clamp(7px, 1.1vw, 10px);
-      font-family: var(--f-sys);
+      font-family: var(--f-mac);
       padding: 0 4px;
       height: 100%;
       display: flex;
       align-items: center;
       cursor: pointer;
-      color: var(--near-black);
+      color: #000;
       white-space: nowrap;
     }
-    .f-m:hover { background: var(--near-black); color: var(--phosphor); }
+    .f-m:hover { background: #000; color: #fff; }
 
-    /* Finder desktop area */
+    /* Finder desktop area — white */
     #f-desk {
       flex: 1;
       position: relative;
       overflow: hidden;
+      background: #fff;
     }
 
     /* =============================================
-       DESKTOP ICONS — Mac System 6 style
+       DESKTOP ICONS — authentic System 1 b&w
        ============================================= */
     .icon {
       position: absolute;
@@ -385,33 +371,33 @@
       gap: 1px;
       cursor: pointer;
       padding: 2px;
-      width: clamp(30px, 4vw, 46px);
+      width: clamp(32px, 4.2vw, 48px);
       -webkit-tap-highlight-color: transparent;
     }
 
     .icon-g {
-      width: clamp(18px, 2.5vw, 26px);
-      height: clamp(15px, 2.2vw, 22px);
+      width: clamp(18px, 2.6vw, 28px);
+      height: clamp(15px, 2.3vw, 24px);
       position: relative;
       flex-shrink: 0;
     }
 
-    /* Folder icon */
+    /* Folder icon — white fill, black border */
     .icon-folder .icon-g::before {
       content: '';
       position: absolute;
       bottom: 0; left: 0; right: 0;
       height: 80%;
-      background: var(--phosphor);
-      border: 1px solid var(--near-black);
+      background: #fff;
+      border: 1px solid #000;
     }
     .icon-folder .icon-g::after {
       content: '';
       position: absolute;
       top: 0; left: 0;
       width: 45%; height: 28%;
-      background: var(--phosphor);
-      border: 1px solid var(--near-black);
+      background: #fff;
+      border: 1px solid #000;
       border-radius: 1px 2px 0 0;
     }
 
@@ -420,8 +406,8 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--phosphor);
-      border: 1px solid var(--near-black);
+      background: #fff;
+      border: 1px solid #000;
       border-radius: 1px;
     }
     .icon-disk .icon-g::after {
@@ -430,7 +416,7 @@
       right: 2px;
       top: 50%; transform: translateY(-50%);
       width: 25%; height: 30%;
-      background: var(--near-black);
+      background: #000;
       border-radius: 0.5px;
     }
 
@@ -439,8 +425,8 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: var(--phosphor);
-      border: 1px solid var(--near-black);
+      background: #fff;
+      border: 1px solid #000;
       clip-path: polygon(0 0, 72% 0, 100% 28%, 100% 100%, 0 100%);
     }
     .icon-doc .icon-g::after {
@@ -449,8 +435,8 @@
       top: 0; right: -1px;
       width: 30%; height: 30%;
       background: transparent;
-      border-left: 1px solid var(--near-black);
-      border-bottom: 1px solid var(--near-black);
+      border-left: 1px solid #000;
+      border-bottom: 1px solid #000;
       clip-path: polygon(100% 0, 100% 100%, 0 100%);
     }
 
@@ -463,8 +449,8 @@
       position: absolute;
       bottom: 0; left: 10%; right: 10%;
       height: 80%;
-      background: var(--phosphor);
-      border: 1px solid var(--near-black);
+      background: #fff;
+      border: 1px solid #000;
       border-radius: 0 0 2px 2px;
     }
     .icon-trash .icon-g::after {
@@ -472,31 +458,28 @@
       position: absolute;
       top: 15%; left: 0; right: 0;
       height: 2px;
-      background: var(--near-black);
+      background: #000;
     }
 
     .icon-label {
-      font-size: clamp(5px, 0.7vw, 8px);
-      font-family: var(--f-sys);
-      color: var(--near-black);
+      font-size: clamp(5px, 0.72vw, 8px);
+      font-family: var(--f-mac);
+      color: #000;
       text-align: center;
       line-height: 1.2;
       white-space: nowrap;
+      background: transparent;
     }
 
-    /* Selected state: full color inversion */
-    .icon.sel .icon-g::before,
-    .icon.sel .icon-g::after { background: var(--near-black); }
+    /* Selected: Mac-style full inversion */
+    .icon.sel .icon-g::before { background: #000; }
+    .icon.sel .icon-g::after  { background: #000; }
+    .icon.sel .icon-disk .icon-g::after { background: #fff; }
     .icon.sel .icon-label {
-      background: var(--near-black);
-      color: var(--phosphor);
+      background: #000;
+      color: #fff;
       padding: 0 2px;
     }
-    .icon.sel .icon-folder .icon-g::before,
-    .icon.sel .icon-folder .icon-g::after,
-    .icon.sel .icon-disk .icon-g::before,
-    .icon.sel .icon-doc .icon-g::before { background: var(--near-black); }
-    .icon.sel .icon-disk .icon-g::after { background: var(--phosphor); }
 
     #trash-icon {
       position: absolute;
@@ -504,13 +487,14 @@
     }
 
     /* =============================================
-       IN-SCREEN WINDOWS (System 6 modal)
+       IN-SCREEN WINDOWS — authentic System 1 chrome
        ============================================= */
     .f-window {
       position: absolute;
-      background: var(--phosphor);
-      border: 1px solid var(--near-black);
-      box-shadow: 2px 2px 0 var(--near-black);
+      background: #fff;
+      border: 1px solid #000;
+      /* System 1 signature: solid black drop shadow, no blur */
+      box-shadow: 3px 3px 0 0 #000;
       z-index: 80;
       display: none;
       flex-direction: column;
@@ -520,47 +504,58 @@
     }
     .f-window.open { display: flex; }
 
+    /* Horizontal stripe title bar — the defining System 1 look */
     .f-win-bar {
-      height: 14px;
-      min-height: 10px;
-      background: repeating-linear-gradient(90deg,
-        rgba(28,21,10,0.25), rgba(28,21,10,0.25) 1px,
-        transparent 1px, transparent 3px);
-      border-bottom: 1px solid var(--near-black);
+      height: clamp(12px, 1.6vw, 18px);
+      background: repeating-linear-gradient(
+        to bottom,
+        #000 0px, #000 1px,
+        #fff 1px, #fff 2px
+      );
+      border-bottom: 1px solid #000;
       display: flex;
       align-items: center;
       padding: 0 3px;
       cursor: grab;
       gap: 3px;
       flex-shrink: 0;
+      position: relative;
     }
     .f-win-close {
-      width: 9px; height: 9px;
-      border: 1px solid var(--near-black);
-      background: var(--phosphor);
+      width: clamp(7px, 1vw, 11px);
+      height: clamp(7px, 1vw, 11px);
+      border: 1px solid #000;
+      background: #fff;
       cursor: pointer;
       flex-shrink: 0;
+      z-index: 1;
     }
-    .f-win-close:hover { background: var(--near-black); }
+    .f-win-close:hover { background: #000; }
 
     .f-win-title {
-      flex: 1;
+      position: absolute;
+      left: 0; right: 0;
       text-align: center;
-      font-size: clamp(6px, 0.8vw, 9px);
-      font-family: var(--f-sys);
+      font-size: clamp(6px, 0.82vw, 10px);
+      font-family: var(--f-mac);
       font-weight: bold;
-      color: var(--near-black);
+      color: #000;
+      /* White pill behind title — authentic System 1 style */
+      background: #fff;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 0 4px;
       pointer-events: none;
-      padding-right: 12px;
     }
     .f-win-body {
       flex: 1;
       overflow-y: auto;
-      padding: 6px 7px;
-      font-size: clamp(6px, 0.75vw, 9px);
-      font-family: var(--f-sys);
+      padding: 6px 8px;
+      font-size: clamp(6px, 0.78vw, 9px);
+      font-family: var(--f-mac);
       line-height: 1.5;
-      color: var(--near-black);
+      color: #000;
+      background: #fff;
     }
     .f-win-body p { margin-bottom: 4px; }
     .f-win-body strong { font-weight: bold; }
@@ -669,28 +664,38 @@
     .desk-obj:active { filter: brightness(0.95); }
 
     /* =============================================
-       BOOT ANIMATION
+       BOOT ANIMATION — "hello." on white screen
        ============================================= */
     #boot {
       position: absolute;
       inset: 0;
-      background: var(--phosphor-bg);
+      background: #fff;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 8px;
       z-index: 200;
       transition: opacity 0.5s ease 0.1s;
     }
     #boot.fade { opacity: 0; pointer-events: none; }
 
-    .happy-mac {
-      font-size: clamp(18px, 2.8vw, 30px);
+    .boot-hello {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(20px, 3.5vw, 38px);
+      font-weight: 700;
+      color: #000;
+      opacity: 0;
+      animation: hm-appear 0.4s 0.5s ease forwards;
+    }
+    .boot-mac {
+      font-size: clamp(14px, 2.2vw, 22px);
       opacity: 0;
       animation: hm-appear 0.3s 0.7s ease forwards;
     }
     @keyframes hm-appear {
       from { opacity: 0; transform: scale(0.85); }
-      to   { opacity: 0.9; transform: scale(1); }
+      to   { opacity: 1; transform: scale(1); }
     }
 
     /* =============================================
@@ -699,7 +704,7 @@
     #screensaver {
       position: absolute;
       inset: 0;
-      background: var(--phosphor-bg);
+      background: #fff;
       display: none;
       z-index: 160;
       cursor: pointer;
@@ -712,7 +717,7 @@
     }
 
     /* =============================================
-       FULL CONTENT OVERLAY (outside Mac)
+       FULL CONTENT OVERLAY — System 1 window style
        ============================================= */
     #overlay {
       position: fixed;
@@ -725,25 +730,19 @@
       transition: background 0.25s ease;
     }
     #overlay.vis { display: flex; }
-    #overlay.active { background: rgba(28,21,10,0.5); }
+    #overlay.active { background: rgba(28,21,10,0.45); }
 
     .panel {
-      background: #FEFCF8;
-      border: 1px solid var(--near-black);
-      /* 6-layer smooth panel shadow */
-      box-shadow:
-        0 1px 2px  rgba(0,0,0,0.05),
-        0 3px 6px  rgba(0,0,0,0.07),
-        0 6px 12px rgba(0,0,0,0.09),
-        0 14px 28px rgba(0,0,0,0.11),
-        0 28px 56px rgba(0,0,0,0.07),
-        4px 4px 0  rgba(0,0,0,0.35);
+      background: #fff;
+      border: 1px solid #000;
+      /* Authentic System 1 drop shadow: solid black, no blur */
+      box-shadow: 5px 5px 0 0 #000;
       max-width: min(660px, 92vw);
       width: 100%;
       max-height: 82vh;
       display: flex;
       flex-direction: column;
-      transform: scale(0.93) translateY(8px);
+      transform: scale(0.94) translateY(6px);
       opacity: 0;
       transition: transform 200ms var(--ease-spring), opacity 180ms ease;
       pointer-events: none;
@@ -754,31 +753,46 @@
       pointer-events: auto;
     }
 
-    /* Panel title bar */
+    /* Panel title bar — System 1 horizontal stripes */
     .p-bar {
-      height: 30px;
-      background: var(--near-black);
+      height: 26px;
+      background: repeating-linear-gradient(
+        to bottom,
+        #000 0px, #000 1px,
+        #fff 1px, #fff 2px
+      );
+      border-bottom: 1px solid #000;
       display: flex;
       align-items: center;
-      padding: 0 14px;
+      padding: 0 8px;
       flex-shrink: 0;
+      position: relative;
     }
     .p-close {
-      width: 12px; height: 12px;
-      border: 1px solid rgba(255,255,255,0.35);
+      width: 13px; height: 13px;
+      border: 1px solid #000;
+      background: #fff;
       cursor: pointer;
-      margin-right: 12px;
       flex-shrink: 0;
-      transition: background 0.08s;
+      z-index: 1;
+      transition: background 0.06s;
     }
-    .p-close:hover { background: rgba(255,255,255,0.25); }
+    .p-close:hover { background: #000; }
 
+    /* White pill behind title text */
     .p-title {
-      font-size: 10px;
-      font-family: var(--f-sys);
-      color: rgba(255,255,255,0.6);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      position: absolute;
+      left: 0; right: 0;
+      text-align: center;
+      font-size: 12px;
+      font-family: var(--f-mac);
+      font-weight: bold;
+      color: #000;
+      background: #fff;
+      width: fit-content;
+      margin: 0 auto;
+      padding: 0 8px;
+      pointer-events: none;
     }
 
     /* Panel content */
@@ -796,12 +810,13 @@
       line-height: 1.12;
       margin-bottom: 22px;
       letter-spacing: -0.01em;
+      color: #000;
     }
     .p-content p {
       font-size: clamp(0.825rem, 1.1vw, 0.9375rem);
       line-height: 1.75;
       margin-bottom: 14px;
-      color: rgba(28,21,10,0.82);
+      color: rgba(0,0,0,0.82);
       max-width: 55ch;
     }
     .p-content ul {
@@ -811,19 +826,19 @@
       font-size: clamp(0.825rem, 1.1vw, 0.9375rem);
       line-height: 1.75;
       margin-bottom: 9px;
-      color: rgba(28,21,10,0.82);
+      color: rgba(0,0,0,0.82);
     }
-    .p-content strong { color: var(--near-black); }
-    .p-content a { color: var(--near-black); text-underline-offset: 3px; }
+    .p-content strong { color: #000; }
+    .p-content a { color: #000; text-underline-offset: 3px; }
     .p-content a:hover { color: var(--amber); }
 
     /* Footnote (a la Amanda Pinsker) */
     .fn {
       margin-top: 30px;
       padding-top: 16px;
-      border-top: 1px solid rgba(28,21,10,0.12);
+      border-top: 1px solid rgba(0,0,0,0.15);
       font-size: clamp(0.7rem, 0.9vw, 0.8125rem);
-      color: rgba(28,21,10,0.45);
+      color: rgba(0,0,0,0.45);
       line-height: 1.65;
     }
 
@@ -947,8 +962,11 @@
         <div id="screen-section" aria-hidden="true">
           <div id="screen-bezel">
             <div id="screen">
-              <!-- Boot screen -->
-              <div id="boot"><div class="happy-mac">☺</div></div>
+              <!-- Boot screen: "hello." -->
+              <div id="boot">
+                <div class="boot-hello">hello.</div>
+                <div class="boot-mac">☺</div>
+              </div>
               <!-- Flying toasters screensaver -->
               <div id="screensaver" onclick="stopSS()"></div>
               <!-- Finder -->
